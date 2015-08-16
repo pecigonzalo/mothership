@@ -1,0 +1,20 @@
+[Unit]
+Description=Sonarr
+After=docker.service
+Requires=docker.service
+ 
+[Service]
+ExecStart=/usr/bin/docker run \
+  --name %n \
+  -p 8989:8989 \
+  -e PUID=1002 -e PGID=1003 \
+  -v /opt/Sonarr/Config:/config \
+  -v /opt/Sonarr/Media:/media \
+  -m 512m \
+  linuxserver/sonarr
+ExecStop=/usr/bin/docker stop -t 2 %n ; /usr/bin/docker rm %n -f
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
