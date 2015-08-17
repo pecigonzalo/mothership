@@ -1,13 +1,6 @@
-# Install Ajenti
-apt_repository "ajenti" do
-  uri "http://repo.ajenti.org/debian"
-  distribution "main"
-  components ["main"]
-  key "http://repo.ajenti.org/debian/key"
-  action :add
-end
-
-package ['ajenti'] do
+# Install EPEL
+package 'Install EPEL Repo' do
+  package 'http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm'
   action :install
 end
 

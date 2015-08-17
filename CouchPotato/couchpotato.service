@@ -4,17 +4,8 @@ After=docker.service
 Requires=docker.service
  
 [Service]
-ExecStart=/usr/bin/docker run \
-  --name %n \
-  -p 5050:5050 \
-  -e PUID=1003 -e PGID=1003 \
-  -v /etc/localtime:/etc/localtime:ro \
-  -v /opt/CouchPotato/Config:/config \
-  -v /opt/CouchPotato/Media/Torrents:/downloads \
-  -v /opt/CouchPotato/Media/Movies:/movies \
-  -m 512m \
-  linuxserver/couchpotato
-ExecStop=/usr/bin/docker stop -t 2 %n ; /usr/bin/docker rm %n -f
+ExecStart=/usr/bin/docker start %n
+ExecStop=/usr/bin/docker stop -t 2 %n
 Restart=always
 RestartSec=10s
  

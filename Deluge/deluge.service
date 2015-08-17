@@ -4,17 +4,8 @@ After=docker.service
 Requires=docker.service
  
 [Service]
-ExecStart=/usr/bin/docker run \
-  --name %n \
-  --net=host \
-  -e PUID=<UID> -e PGID=<GID> \
-  -v /opt/Deluge/Media/Torrents:/torrents \
-  -v /opt/Deluge/Config:/config \
-  -v /etc/localtime:/etc/localtime:ro \
-  -m 256m \
-  -rm \
-  pecigonzalo/deluge
-ExecStop=/usr/bin/docker stop -t 2 %n ; /usr/bin/docker rm %n -f
+ExecStart=/usr/bin/docker start %n
+ExecStop=/usr/bin/docker stop -t 2 %n
 Restart=always
 RestartSec=10s
  

@@ -4,15 +4,8 @@ After=docker.service
 Requires=docker.service
  
 [Service]
-ExecStart=/usr/bin/docker run \
-  --name %n \
-  --net=host \
-  -e PUID=1001 -e PGID=1003 \
-  -v /opt/PlexMediaServer/Config:/config \
-  -v /opt/PlexMediaServer/Media:/media \
-  -m 512m \
-  linuxserver/plex
-ExecStop=/usr/bin/docker stop -t 2 %n ; /usr/bin/docker rm %n -f
+ExecStart=/usr/bin/docker start %n
+ExecStop=/usr/bin/docker stop -t 2 %n
 Restart=always
 RestartSec=10s
  
