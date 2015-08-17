@@ -1,0 +1,3 @@
+file_cache_path "/tmp/Chef"
+cookbook_path "/tmp/Chef/cookbooks"
+json_attribs "/tmp/Chef/node.json"
