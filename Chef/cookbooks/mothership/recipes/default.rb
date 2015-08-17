@@ -1,8 +1,8 @@
 # Install EPEL
-package 'Install EPEL Repo' do
-  package 'http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm'
-  action :install
-end
+#package 'Install EPEL Repo' do
+#  package 'http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm'
+#  action :install
+#end
 
 # Media folder permissions
 directory '/mnt2/Media' do
@@ -38,13 +38,12 @@ end
 docker_container 'couchpotato.service' do
   repo 'linuxserver/couchpotato'
   port '5050:5050'
-  memory '512m'
+  memory 512000000
   env [
     'PUID=1003', 
     'PGID=1003'
   ]
   volumes [
-    '/etc/localtime:/etc/localtime:ro',
     '/opt/CouchPotato/Config:/config',
     '/opt/CouchPotato/Media/Torrents:/downloads',
     '/opt/CouchPotato/Media/Movies:/movies'
@@ -77,13 +76,12 @@ end
 docker_container 'deluge.service' do
   repo 'pecigonzalo/deluge'
   network_mode 'host'
-  memory '128m'
+  memory 512000000
   env [
     'PUID=1004', 
     'PGID=1003'
   ]
   volumes [
-    '/etc/localtime:/etc/localtime:ro',
     '/opt/Deluge/Media/Torrents:/torrents',
     '/opt/Deluge/Config:/config'
   ]
@@ -115,13 +113,12 @@ end
 docker_container 'plex.service' do
   repo 'linuxserver/plex'
   network_mode 'host'
-  memory '512m'
+  memory 512000000
   env [
     'PUID=1001', 
     'PGID=1003'
   ]
   volumes [
-    '/etc/localtime:/etc/localtime:ro',
     '/opt/PlexMediaServer/Config:/config',
     '/opt/PlexMediaServer/Media:/media'
   ]
@@ -153,13 +150,12 @@ end
 docker_container 'sonarr.service' do
   repo 'linuxserver/sonarr'
   port '8989:8989'
-  memory '512m'
+  memory 512000000
   env [
     'PUID=1002', 
     'PGID=1003'
   ]
   volumes [
-    '/etc/localtime:/etc/localtime:ro',
     '/opt/Sonarr/Config:/config',
     '/opt/Sonarr/Media:/media'
   ]
