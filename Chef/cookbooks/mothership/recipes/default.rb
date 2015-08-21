@@ -24,6 +24,9 @@ directory '/mnt2/DockerMounts/CouchPotato' do
 end
 
 directory '/mnt2/DockerMounts/CouchPotato/Config' do
+  owner 'root'
+  group 'MediaServices'
+  mode '2775'
   action :create
 end
 
@@ -38,7 +41,7 @@ end
 docker_container 'couchpotato.service' do
   repo 'linuxserver/couchpotato'
   port '5050:5050'
-  memory 512000000
+  memory 536870912
   env [
     'PUID=1003', 
     'PGID=1003'
@@ -62,6 +65,9 @@ directory '/mnt2/DockerMounts/Deluge' do
 end
 
 directory '/mnt2/DockerMounts/Deluge/Config' do
+  owner 'root'
+  group 'MediaServices'
+  mode '2775'
   action :create
 end
 
@@ -76,7 +82,7 @@ end
 docker_container 'deluge.service' do
   repo 'pecigonzalo/deluge'
   network_mode 'host'
-  memory 512000000
+  memory 536870912
   env [
     'PUID=1004', 
     'PGID=1003'
@@ -99,6 +105,9 @@ directory '/mnt2/DockerMounts/Plex' do
 end
 
 directory '/mnt2/DockerMounts/Plex/Config' do
+  owner 'root'
+  group 'MediaServices'
+  mode '2775'
   action :create
 end
 
@@ -113,7 +122,7 @@ end
 docker_container 'plex.service' do
   repo 'linuxserver/plex'
   network_mode 'host'
-  memory 512000000
+  memory 536870912
   env [
     'PUID=1001', 
     'PGID=1003'
@@ -136,6 +145,9 @@ directory '/mnt2/DockerMounts/Sonarr' do
 end
 
 directory '/mnt2/DockerMounts/Sonarr/Config' do
+  owner 'root'
+  group 'MediaServices'
+  mode '2775'
   action :create
 end
 
@@ -150,7 +162,7 @@ end
 docker_container 'sonarr.service' do
   repo 'linuxserver/sonarr'
   port '8989:8989'
-  memory 512000000
+  memory 536870912
   env [
     'PUID=1002', 
     'PGID=1003'
