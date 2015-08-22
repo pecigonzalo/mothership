@@ -38,6 +38,10 @@ link '/opt/CouchPotato/Media' do
   to '/mnt2/Media'
 end
 
+docker_image 'linuxserver/couchpotato' do
+  action :pull
+end
+
 docker_container 'couchpotato.service' do
   repo 'linuxserver/couchpotato'
   port '5050:5050'
@@ -77,6 +81,10 @@ end
 
 link '/opt/Deluge/Media' do
   to '/mnt2/Media'
+end
+
+docker_image 'pecigonzalo/deluge' do
+  action :pull
 end
 
 docker_container 'deluge.service' do
@@ -119,6 +127,10 @@ link '/opt/Plex/Media' do
   to '/mnt2/Media'
 end
 
+docker_image 'linuxserver/plex' do
+  action :pull
+end
+
 docker_container 'plex.service' do
   repo 'linuxserver/plex'
   network_mode 'host'
@@ -157,6 +169,10 @@ end
 
 link '/opt/Sonarr/Media' do
   to '/mnt2/Media'
+end
+
+docker_image 'linuxserver/sonarr' do
+  action :pull
 end
 
 docker_container 'sonarr.service' do
