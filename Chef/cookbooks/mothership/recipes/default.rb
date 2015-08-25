@@ -137,11 +137,13 @@ link '/opt/Deluge/Media' do
 end
 
 docker_image 'pecigonzalo/deluge' do
+  tag 'dev'
   action :pull
 end
 
 docker_container 'deluge.service' do
   repo 'pecigonzalo/deluge'
+  tag 'dev'
   network_mode 'host'
   memory 536870912
   env [
