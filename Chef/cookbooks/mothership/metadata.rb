@@ -1,8 +1,8 @@
 name             'mothership'
-maintainer       'YOUR_COMPANY_NAME'
-maintainer_email 'YOUR_EMAIL'
+maintainer       'Gonzalo Peci'
+maintainer_email 'email@emial.com'
 license          'All rights reserved'
 description      'Installs/Configures mothership'
-long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+long_description 'No Description'
 version          '0.1.0'
 depends 'docker', '~> 1.0'
