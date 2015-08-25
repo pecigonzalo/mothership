@@ -92,7 +92,7 @@ docker_container 'couchpotato.service' do
     'PUID=2002', 
     'PGID=2004'
   ]
-  bind [
+  binds [
     '/opt/CouchPotato/Config:/config',
     '/opt/CouchPotato/Media/Torrents:/downloads',
     '/opt/CouchPotato/Media/Movies:/movies'
@@ -137,7 +137,7 @@ docker_container 'deluge.service' do
     'PUID=2001', 
     'PGID=2004'
   ]
-  bind [
+  binds [
     '/opt/Deluge/Media/Torrents:/torrents',
     '/opt/Deluge/Config:/config'
   ]
@@ -181,7 +181,7 @@ docker_container 'plex.service' do
     'PUID=2000', 
     'PGID=2004'
   ]
-  bind [
+  binds [
     '/opt/PlexMediaServer/Config:/config',
     '/opt/PlexMediaServer/Media:/media'
   ]
@@ -225,7 +225,7 @@ docker_container 'sonarr.service' do
     'PUID=2003', 
     'PGID=2004'
   ]
-  bind [
+  binds [
     '/opt/Sonarr/Config:/config',
     '/opt/Sonarr/Media:/media'
   ]
