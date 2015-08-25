@@ -103,6 +103,7 @@ docker_container 'couchpotato.service' do
     'PGID=2004'
   ]
   binds [
+    '/etc/localtime:/etc/localtime:ro',
     '/opt/CouchPotato/Config:/config',
     '/opt/CouchPotato/Media/Torrents:/downloads',
     '/opt/CouchPotato/Media/Movies:/movies'
@@ -148,6 +149,7 @@ docker_container 'deluge.service' do
     'PGID=2004'
   ]
   binds [
+    '/etc/localtime:/etc/localtime:ro',
     '/opt/Deluge/Media/Torrents:/torrents',
     '/opt/Deluge/Config:/config'
   ]
@@ -192,6 +194,7 @@ docker_container 'plex.service' do
     'PGID=2004'
   ]
   binds [
+    '/etc/localtime:/etc/localtime:ro',
     '/opt/Plex/Config:/config',
     '/opt/Plex/Media:/media'
   ]
@@ -236,6 +239,7 @@ docker_container 'sonarr.service' do
     'PGID=2004'
   ]
   binds [
+    '/etc/localtime:/etc/localtime:ro',
     '/opt/Sonarr/Config:/config',
     '/opt/Sonarr/Media:/media'
   ]
