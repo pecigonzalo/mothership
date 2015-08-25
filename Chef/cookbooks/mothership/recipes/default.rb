@@ -2,39 +2,39 @@
 group 'MediaServices' do
   action :create
   append false
-  gid '2004'
+  gid 2004
 end
 
 # Create Users
 user 'Plex' do
   action :create
   comment 'Plex Service'
-  uid '2000'
-  gid '2004'
+  uid 2000
+  gid 2004
   shell '/sbin/nologin'
 end
 
 user 'Deluge' do
   action :create
   comment 'Deluge Service'
-  uid '2001'
-  gid '2004'
+  uid 2001
+  gid 2004
   shell '/sbin/nologin'
 end
 
 user 'CouchPotato' do
   action :create
   comment 'CouchPotato Service'
-  uid '2002'
-  gid '2004'
+  uid 2002
+  gid 2004
   shell '/sbin/nologin'
 end
 
 user 'Sonarr' do
   action :create
   comment 'Sonarr Service'
-  uid '2003'
-  gid '2004'
+  uid 2003
+  gid 2004
   shell '/sbin/nologin'
 end
 
