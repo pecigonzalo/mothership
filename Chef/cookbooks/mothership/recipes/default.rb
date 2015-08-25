@@ -182,8 +182,8 @@ docker_container 'plex.service' do
     'PGID=2004'
   ]
   binds [
-    '/opt/PlexMediaServer/Config:/config',
-    '/opt/PlexMediaServer/Media:/media'
+    '/opt/Plex/Config:/config',
+    '/opt/Plex/Media:/media'
   ]
   action :create
 end

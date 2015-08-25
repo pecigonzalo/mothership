@@ -1,7 +1,7 @@
 [Unit]
 Description=Sonarr
-After=docker.service
-Requires=docker.service
+After=docker.service docker.socket
+Requires=docker.service docker.socket
  
 [Service]
 ExecStart=/usr/bin/docker start -a %n
