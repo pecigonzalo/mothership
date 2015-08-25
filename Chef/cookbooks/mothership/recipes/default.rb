@@ -1,12 +1,6 @@
 # Creat Groups
 group 'MediaServices' do
   action :create
-  members [
-    'Plex',
-    'Deluge',
-    'CouchPotato',
-    'Sonarr',
-  ]
   append false
   gid '2004'
 end
@@ -44,6 +38,16 @@ user 'Sonarr' do
   shell '/sbin/nologin'
 end
 
+group 'MediaServices' do
+  action :modify
+  members [
+    'Plex',
+    'Deluge',
+    'CouchPotato',
+    'Sonarr',
+  ]
+  append false
+end
 
 
 # Install EPEL
