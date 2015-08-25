@@ -90,7 +90,7 @@ docker_container 'couchpotato.service' do
   memory 536870912
   env [
     'PUID=2002', 
-    'PGID=2002'
+    'PGID=2004'
   ]
   volumes [
     '/opt/CouchPotato/Config:/config',
@@ -135,7 +135,7 @@ docker_container 'deluge.service' do
   memory 536870912
   env [
     'PUID=2001', 
-    'PGID=2001'
+    'PGID=2004'
   ]
   volumes [
     '/opt/Deluge/Media/Torrents:/torrents',
@@ -179,7 +179,7 @@ docker_container 'plex.service' do
   memory 536870912
   env [
     'PUID=2000', 
-    'PGID=2000'
+    'PGID=2004'
   ]
   volumes [
     '/opt/PlexMediaServer/Config:/config',
@@ -223,7 +223,7 @@ docker_container 'sonarr.service' do
   memory 536870912
   env [
     'PUID=2003', 
-    'PGID=2003'
+    'PGID=2004'
   ]
   volumes [
     '/opt/Sonarr/Config:/config',
