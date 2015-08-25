@@ -1,3 +1,45 @@
+# Create Users
+user 'Plex' do
+  action :create
+  comment 'Plex Service'
+  uid '2000'
+  shell '/sbin/nologin'
+end
+
+user 'Deluge' do
+  action :create
+  comment 'Deluge Service'
+  uid '2001'
+  shell '/sbin/nologin'
+end
+
+user 'CouchPotato' do
+  action :create
+  comment 'CouchPotato Service'
+  uid '2002'
+  shell '/sbin/nologin'
+end
+
+user 'Sonarr' do
+  action :create
+  comment 'Sonarr Service'
+  uid '2003'
+  shell '/sbin/nologin'
+end
+
+# Creat Groups
+group 'MediaServices' do
+  action :create
+  members [
+    'Plex',
+    'Deluge',
+    'CouchPotato',
+    'Sonarr',
+  ]
+  append false
+  gid 2000
+end
+
 # Install EPEL
 #package 'Install EPEL Repo' do
 #  package 'http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm'
@@ -47,8 +89,8 @@ docker_container 'couchpotato.service' do
   port '5050:5050'
   memory 536870912
   env [
-    'PUID=1003', 
-    'PGID=1003'
+    'PUID=2002', 
+    'PGID=2000'
   ]
   volumes [
     '/opt/CouchPotato/Config:/config',
@@ -92,8 +134,8 @@ docker_container 'deluge.service' do
   network_mode 'host'
   memory 536870912
   env [
-    'PUID=1004', 
-    'PGID=1003'
+    'PUID=2001', 
+    'PGID=2000'
   ]
   volumes [
     '/opt/Deluge/Media/Torrents:/torrents',
@@ -136,8 +178,8 @@ docker_container 'plex.service' do
   network_mode 'host'
   memory 536870912
   env [
-    'PUID=1001', 
-    'PGID=1003'
+    'PUID=2000', 
+    'PGID=2000'
   ]
   volumes [
     '/opt/PlexMediaServer/Config:/config',
@@ -180,8 +222,8 @@ docker_container 'sonarr.service' do
   port '8989:8989'
   memory 536870912
   env [
-    'PUID=1002', 
-    'PGID=1003'
+    'PUID=2003', 
+    'PGID=2000'
   ]
   volumes [
     '/opt/Sonarr/Config:/config',
