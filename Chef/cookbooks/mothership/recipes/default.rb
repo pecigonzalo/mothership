@@ -153,6 +153,7 @@ docker_container 'deluge.service' do
   binds [
     '/etc/localtime:/etc/localtime:ro',
     '/opt/Deluge/Media/Torrents:/torrents',
+    '/opt/Deluge/Media/Movies:/movies',
     '/opt/Deluge/Config:/config'
   ]
   action :create
