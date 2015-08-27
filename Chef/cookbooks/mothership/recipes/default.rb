@@ -103,6 +103,7 @@ docker_container 'couchpotato.service' do
     'PGID=2004'
   ]
   binds [
+    '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
     '/opt/CouchPotato/Config:/config',
     '/opt/CouchPotato/Media/Torrents:/downloads',

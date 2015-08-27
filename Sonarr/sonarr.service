@@ -1,6 +1,6 @@
 [Unit]
 Description=Sonarr
-After=docker.service docker.socket
+After=docker.service rockstor.service
 Requires=docker.service docker.socket
  
 [Service]

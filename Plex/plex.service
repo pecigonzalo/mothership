@@ -1,7 +1,7 @@
 [Unit]
 Description=Plex
-After=docker.service docker.socket
-Requires=docker.service docker.socket
+After=docker.service rockstor.service
+Requires=docker.service
  
 [Service]
 ExecStart=/usr/bin/docker start -a %n
