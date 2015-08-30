@@ -243,6 +243,7 @@ docker_container 'sonarr.service' do
     'PGID=2004'
   ]
   binds [
+    '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
     '/opt/Sonarr/Config:/config',
     '/opt/Sonarr/Media:/media'
