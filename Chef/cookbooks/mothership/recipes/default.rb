@@ -97,7 +97,6 @@ end
 docker_container 'couchpotato.service' do
   repo 'linuxserver/couchpotato'
   port '5050:5050'
-  memory 536870912
   env [
     'PUID=2002', 
     'PGID=2004'
@@ -146,7 +145,6 @@ docker_container 'deluge.service' do
   repo 'pecigonzalo/deluge'
   tag 'dev'
   network_mode 'host'
-  memory 536870912
   env [
     'PUID=2001', 
     'PGID=2004'
@@ -192,7 +190,6 @@ end
 docker_container 'plex.service' do
   repo 'linuxserver/plex'
   network_mode 'host'
-  memory 536870912
   env [
     'PUID=2000', 
     'PGID=2004'
@@ -237,7 +234,6 @@ end
 docker_container 'sonarr.service' do
   repo 'linuxserver/sonarr'
   port '8989:8989'
-  memory 536870912
   env [
     'PUID=2003', 
     'PGID=2004'
