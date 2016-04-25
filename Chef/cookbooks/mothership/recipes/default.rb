@@ -57,7 +57,7 @@ end
 #end
 
 # Media folder permissions
-directory '/mnt2/Media' do
+directory '/data/Media' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
@@ -67,7 +67,7 @@ end
 
 # Couch Potato
 
-directory '/mnt2/DockerMounts/CouchPotato' do
+directory '/data/DockerMounts/CouchPotato' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
@@ -75,19 +75,15 @@ directory '/mnt2/DockerMounts/CouchPotato' do
   action :create
 end
 
-directory '/mnt2/DockerMounts/CouchPotato/Config' do
+directory '/data/DockerMounts/CouchPotato/Config' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
   action :create
 end
 
-link '/opt/CouchPotato' do
-  to '/mnt2/DockerMounts/CouchPotato'
-end
-
-link '/opt/CouchPotato/Media' do
-  to '/mnt2/Media'
+link '/data/DockerMounts/CouchPotato/Media' do
+  to '/data/Media'
 end
 
 docker_image 'linuxserver/couchpotato' do
@@ -104,16 +100,16 @@ docker_container 'couchpotato.service' do
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
-    '/opt/CouchPotato/Config:/config',
-    '/opt/CouchPotato/Media/Torrents:/downloads',
-    '/opt/CouchPotato/Media/Movies:/movies'
+    '/data/DockerMounts/CouchPotato/Config:/config',
+    '/data/DockerMounts/CouchPotato/Media/Torrents:/downloads',
+    '/data/DockerMounts/CouchPotato/Media/Movies:/movies'
   ]
   action :create
 end
 
 # Deluge
 
-directory '/mnt2/DockerMounts/Deluge' do
+directory '/data/DockerMounts/Deluge' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
@@ -121,19 +117,15 @@ directory '/mnt2/DockerMounts/Deluge' do
   action :create
 end
 
-directory '/mnt2/DockerMounts/Deluge/Config' do
+directory '/data/DockerMounts/Deluge/Config' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
   action :create
 end
 
-link '/opt/Deluge' do
-  to '/mnt2/DockerMounts/Deluge'
-end
-
-link '/opt/Deluge/Media' do
-  to '/mnt2/Media'
+link '/data/DockerMounts/Deluge/Media' do
+  to '/data/Media'
 end
 
 docker_image 'pecigonzalo/deluge' do
@@ -151,16 +143,16 @@ docker_container 'deluge.service' do
   ]
   binds [
     '/etc/localtime:/etc/localtime:ro',
-    '/opt/Deluge/Media/Torrents:/torrents',
-    '/opt/Deluge/Media/Movies:/movies',
-    '/opt/Deluge/Config:/config'
+    '/data/DockerMounts/Deluge/Media/Torrents:/torrents',
+    '/data/DockerMounts/Deluge/Media/Movies:/movies',
+    '/data/DockerMounts/Deluge/Config:/config'
   ]
   action :create
 end
 
 # Plex
 
-directory '/mnt2/DockerMounts/Plex' do
+directory '/data/DockerMounts/Plex' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
@@ -168,19 +160,15 @@ directory '/mnt2/DockerMounts/Plex' do
   action :create
 end
 
-directory '/mnt2/DockerMounts/Plex/Config' do
+directory '/data/DockerMounts/Plex/Config' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
   action :create
 end
 
-link '/opt/Plex' do
-  to '/mnt2/DockerMounts/Plex'
-end
-
-link '/opt/Plex/Media' do
-  to '/mnt2/Media'
+link '/data/DockerMounts/Plex/Media' do
+  to '/data/Media'
 end
 
 docker_image 'linuxserver/plex' do
@@ -196,15 +184,15 @@ docker_container 'plex.service' do
   ]
   binds [
     '/etc/localtime:/etc/localtime:ro',
-    '/opt/Plex/Config:/config',
-    '/opt/Plex/Media:/media'
+    '/data/DockerMounts/Plex/Config:/config',
+    '/data/DockerMounts/Plex/Media:/media'
   ]
   action :create
 end
 
 # Sonarr
 
-directory '/mnt2/DockerMounts/Sonarr' do
+directory '/data/DockerMounts/Sonarr' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
@@ -212,19 +200,15 @@ directory '/mnt2/DockerMounts/Sonarr' do
   action :create
 end
 
-directory '/mnt2/DockerMounts/Sonarr/Config' do
+directory '/data/DockerMounts/Sonarr/Config' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
   action :create
 end
 
-link '/opt/Sonarr' do
-  to '/mnt2/DockerMounts/Sonarr'
-end
-
-link '/opt/Sonarr/Media' do
-  to '/mnt2/Media'
+link '/data/DockerMounts/Sonarr/Media' do
+  to '/data/Media'
 end
 
 docker_image 'linuxserver/sonarr' do
@@ -233,7 +217,7 @@ end
 
 docker_container 'sonarr.service' do
   repo 'linuxserver/sonarr'
-  port '8989:8989'
+  port ['8989:8989', '9898:9898']
   env [
     'PUID=2003', 
     'PGID=2004'
@@ -241,8 +225,145 @@ docker_container 'sonarr.service' do
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
-    '/opt/Sonarr/Config:/config',
-    '/opt/Sonarr/Media:/media'
+    '/data/DockerMounts/Sonarr/Config:/config',
+    '/data/DockerMounts/Sonarr/Media:/media'
   ]
   action :create
 end
+
+# Plex Requests
+
+directory '/data/DockerMounts/PlexRequests' do
+  owner 'root'
+  group 'root'
+  mode '2775'
+  recursive true
+  action :create
+end
+
+directory '/data/DockerMounts/PlexRequests/Config' do
+  owner 'root'
+  group 'root'
+  mode '2775'
+  action :create
+end
+
+docker_image 'lsiodev/plexrequests' do
+  action :pull
+end
+
+docker_container 'plexrequests.service' do
+  repo  'lsiodev/plexrequests'
+  env [
+    'URL_BASE=/plexr'
+  ]
+  binds [
+    '/dev/rtc:/dev/rtc:ro',
+    '/etc/localtime:/etc/localtime:ro',
+    '/data/DockerMounts/PlexRequests/Config:/config'
+  ]
+  action :create
+end
+
+# HTPC Manager
+
+directory '/data/DockerMounts/HTPCManager' do
+  owner 'root'
+  group 'root'
+  mode '2775'
+  recursive true
+  action :create
+end
+
+directory '/data/DockerMounts/HTPCManager/Config' do
+  owner 'root'
+  group 'root'
+  mode '2775'
+  action :create
+end
+
+docker_image 'linuxserver/htpcmanager' do
+  action :pull
+end
+
+docker_container 'htpcmanager.service' do
+  repo  'linuxserver/htpcmanager'
+  port  '8085:8085'
+  binds [
+    '/dev/rtc:/dev/rtc:ro',
+    '/etc/localtime:/etc/localtime:ro',
+    '/data/DockerMounts/HTPCManager/Config:/config'
+  ]
+  action :create
+end
+
+# h5ai
+
+directory '/data/DockerMounts/h5ai' do
+  owner 'root'
+  group 'root'
+  mode '2775'
+  recursive true
+  action :create
+end
+
+directory '/data/DockerMounts/h5ai/Config' do
+  owner 'root'
+  group 'root'
+  mode '2775'
+  action :create
+end
+
+link '/data/DockerMounts/h5ai/Media' do
+  to '/data/Media'
+end
+
+docker_image 'paulvalla/docker-h5ai' do
+  action :pull
+end
+
+docker_container 'h5ai.service' do
+  repo  'paulvalla/docker-h5ai'
+  port  '81:80'
+  binds [
+    '/dev/rtc:/dev/rtc:ro',
+    '/etc/localtime:/etc/localtime:ro',
+    '/data/DockerMounts/h5ai/Config:/etc/nginx',
+    '/data/DockerMounts/h5ai/Media:/var/www'
+  ]
+  action :create
+end
+
+# NGINX
+
+directory '/data/DockerMounts/NGINX' do
+  owner 'root'
+  group 'root'
+  mode '2775'
+  recursive true
+  action :create
+end
+
+directory '/data/DockerMounts/NGINX/Config' do
+  owner 'root'
+  group 'root'
+  mode '2775'
+  action :create
+end
+
+docker_image 'linuxserver/nginx' do
+  action :pull
+end
+
+docker_container 'nginx.service' do
+  repo  'linuxserver/nginx'
+  port  ['80:80', '443:443']
+  links ['sonarr.service:sonarr', 'plexrequests.service:plexr', 'h5ai.service:h5ai']
+  binds [
+    '/dev/rtc:/dev/rtc:ro',
+    '/etc/localtime:/etc/localtime:ro',
+    '/data/DockerMounts/NGINX/Config:/config'
+  ]
+  action :create
+end
+
