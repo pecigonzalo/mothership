@@ -40,21 +40,19 @@ end
 
 group 'MediaServices' do
   action :modify
-  members [
-    'Plex',
-    'Deluge',
-    'CouchPotato',
-    'Sonarr',
-  ]
+  members %w(
+    Plex
+    Deluge
+    CouchPotato
+    Sonarr)
   append false
 end
 
-
 # Install EPEL
-#package 'Install EPEL Repo' do
-#  package 'http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm'
-#  action :install
-#end
+# package 'Install EPEL Repo' do
+#   package 'http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm'
+#   action :install
+# end
 
 # Media folder permissions
 directory '/data/Media' do
@@ -92,9 +90,8 @@ end
 
 docker_container 'couchpotato.service' do
   repo 'linuxserver/couchpotato'
-  port '5050:5050'
   env [
-    'PUID=2002', 
+    'PUID=2002',
     'PGID=2004'
   ]
   binds [
@@ -138,7 +135,7 @@ docker_container 'deluge.service' do
   tag 'dev'
   network_mode 'host'
   env [
-    'PUID=2001', 
+    'PUID=2001',
     'PGID=2004'
   ]
   binds [
@@ -179,7 +176,7 @@ docker_container 'plex.service' do
   repo 'linuxserver/plex'
   network_mode 'host'
   env [
-    'PUID=2000', 
+    'PUID=2000',
     'PGID=2004'
   ]
   binds [
@@ -217,9 +214,8 @@ end
 
 docker_container 'sonarr.service' do
   repo 'linuxserver/sonarr'
-  port ['8989:8989', '9898:9898']
   env [
-    'PUID=2003', 
+    'PUID=2003',
     'PGID=2004'
   ]
   binds [
@@ -288,7 +284,6 @@ end
 
 docker_container 'htpcmanager.service' do
   repo  'linuxserver/htpcmanager'
-  port  '8085:8085'
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
@@ -324,7 +319,6 @@ end
 
 docker_container 'h5ai.service' do
   repo  'paulvalla/docker-h5ai'
-  port  '81:80'
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
@@ -358,7 +352,12 @@ end
 docker_container 'nginx.service' do
   repo  'linuxserver/nginx'
   port  ['80:80', '443:443']
-  links ['sonarr.service:sonarr', 'plexrequests.service:plexr', 'h5ai.service:h5ai']
+  links ['sonarr.service:sonarr',
+         'plexrequests.service:plexr',
+         'h5ai.service:h5ai',
+         'couchpotato.service:couchpotato',
+         'htpcmanager.service:htpcmanager'
+  ]
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
@@ -366,4 +365,3 @@ docker_container 'nginx.service' do
   ]
   action :create
 end
-
