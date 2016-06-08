@@ -48,12 +48,6 @@ group 'MediaServices' do
   append false
 end
 
-# Install EPEL
-# package 'Install EPEL Repo' do
-#   package 'http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm'
-#   action :install
-# end
-
 # Media folder permissions
 directory '/data/Media' do
   owner 'root'
@@ -328,6 +322,29 @@ docker_container 'h5ai.service' do
   action :create
 end
 
+# PlexPy
+
+docker_image 'linuxserver/plexpy' do
+  action :pull
+end
+
+docker_container 'plexpy.service' do
+  repo  'linuxserver/plexpy'
+  network_mode 'host'
+  env [
+    'PUID=2000',
+    'PGID=2004'
+  ]
+  binds [
+    '/dev/rtc:/dev/rtc:ro',
+    '/etc/localtime:/etc/localtime:ro',
+    '/data/DockerMounts/PlexPy/config:/config',
+    '/data/DockerMounts/Plex/Config/Library/Application Support/Plex Media Server/Logs:/logs:ro'
+  ]
+  action :create
+end
+
+
 # NGINX
 
 directory '/data/DockerMounts/NGINX' do
@@ -356,7 +373,9 @@ docker_container 'nginx.service' do
          'plexrequests.service:plexr',
          'h5ai.service:h5ai',
          'couchpotato.service:couchpotato',
-         'htpcmanager.service:htpcmanager'
+         'htpcmanager.service:htpcmanager',
+         'wordpress.db.service',
+         'wordpress.nginx.service'
   ]
   binds [
     '/dev/rtc:/dev/rtc:ro',
