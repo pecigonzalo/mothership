@@ -374,8 +374,7 @@ docker_container 'nginx.service' do
          'h5ai.service:h5ai',
          'couchpotato.service:couchpotato',
          'htpcmanager.service:htpcmanager',
-         'wordpress.db.service',
-         'wordpress.nginx.service'
+         'wordpress.nginx.service:wordpress'
   ]
   binds [
     '/dev/rtc:/dev/rtc:ro',
