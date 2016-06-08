@@ -29,7 +29,6 @@ git '/tmp/docker-wordpress' do
 end
 
 docker_image 'pecigonzalo/wordpress' do
-  tag 'wordpress'
   source '/tmp/docker-wordpress'
   action :build
 end
@@ -84,7 +83,7 @@ directory '/data/DockerMounts/wordpress_nginx/Config' do
 end
 
 docker_container 'wordpress.nginx.service' do
-  repo 'wordpress'
+  repo 'pecigonzalo/wordpress'
   env [
     'PUID=2005',
     'PGID=2005'
