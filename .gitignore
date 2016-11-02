@@ -1,3 +1,5 @@
 # Ignore chef zero items
-Chef/site-cookbooks
+Chef/site-cookbooks/
 Chef/vendor/
+Chef/nodes/
+Chef/clients/
