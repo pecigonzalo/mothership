@@ -1,7 +1,19 @@
 DEPENDENCIES
   docker (~> 2.9.1)
+  local_couchpotato
+    path: cookbooks/local_couchpotato
+  local_deluge
+    path: cookbooks/local_deluge
   local_docker
     path: cookbooks/local_docker
+  local_nginx
+    path: cookbooks/local_nginx
+  local_plex
+    path: cookbooks/local_plex
+  local_sonarr
+    path: cookbooks/local_sonarr
+  local_users
+    path: cookbooks/local_users
 
 GRAPH
   apt (5.0.0)
@@ -11,6 +23,12 @@ GRAPH
   compat_resource (12.16.1)
   docker (2.9.7)
     compat_resource (>= 12.14.2)
+  local_couchpotato (0.1.0)
+  local_deluge (0.1.0)
   local_docker (0.1.0)
     chef-apt-docker (>= 0.0.0)
     docker (~> 2.9.1)
+  local_nginx (0.1.0)
+  local_plex (0.1.0)
+  local_sonarr (0.1.0)
+  local_users (0.1.0)
