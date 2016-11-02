@@ -1,0 +1,16 @@
+DEPENDENCIES
+  docker (~> 2.9.1)
+  local_docker
+    path: cookbooks/local_docker
+
+GRAPH
+  apt (5.0.0)
+    compat_resource (>= 12.14.7)
+  chef-apt-docker (1.0.0)
+    apt (>= 2.9.0)
+  compat_resource (12.16.1)
+  docker (2.9.7)
+    compat_resource (>= 12.14.2)
+  local_docker (0.1.0)
+    chef-apt-docker (>= 0.0.0)
+    docker (~> 2.9.1)
