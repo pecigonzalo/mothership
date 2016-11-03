@@ -39,12 +39,15 @@ docker_container 'nginx.service' do
   port  ['80:80', '443:443']
   env [
     'PUID=2006',
-    'PGID=2005'
+    'PGID=2005',
+    'ADVANCED_DISABLEUPDATES=true'
   ]
-  links ['sonarr.service:sonarr',
-         'plexrequests.service:plexr',
-         'couchpotato.service:couchpotato',
-         'wordpress.service:wordpress'
+  links [
+    'sonarr.service:sonarr',
+    'plexrequests.service:plexr',
+    'couchpotato.service:couchpotato',
+    'wordpress.service:wordpress',
+    'wordpress.db.service:db'
   ]
   binds [
     '/dev/rtc:/dev/rtc:ro',
