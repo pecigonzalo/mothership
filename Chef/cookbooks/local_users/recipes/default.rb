@@ -13,3 +13,9 @@ group 'MediaServices' do
   append false
   gid 2004
 end
+
+group 'NGINX' do
+  action :create
+  append false
+  gid 2005
+end

@@ -1,6 +1,0 @@
-{
-  "run_list": [
-    "recipe[mothership::wordpress]",
-    "recipe[mothership]"
-  ]
-}

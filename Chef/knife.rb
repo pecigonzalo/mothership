@@ -4,8 +4,8 @@ cookbook_path    [
   File.expand_path('../site-cookbooks', __FILE__)
 ]
 
-knife[:before_bootstrap] = 'berks vendor "$(pwd)/site-cookbooks"'
-knife[:before_converge]  = 'berks vendor "$(pwd)/site-cookbooks"'
+knife[:before_bootstrap] = 'berks vendor -q "$(pwd)/site-cookbooks"'
+knife[:before_converge]  = 'berks vendor -q "$(pwd)/site-cookbooks"'
 
 knife[:ssh_attribute] = 'knife_zero.host'
 knife[:use_sudo] = true

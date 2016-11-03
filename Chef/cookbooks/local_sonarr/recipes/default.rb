@@ -19,28 +19,28 @@ directory 'Create Media Folder for Sonarr' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
-  path '/data/Media'
+  path '/home/data/Media'
   recursive true
   action :create
 end
 
-directory '/data/DockerMounts/Sonarr' do
-  owner 'root'
+directory '/home/data/DockerMounts/Sonarr' do
+  owner 'Sonarr'
   group 'MediaServices'
   mode '2775'
   recursive true
   action :create
 end
 
-directory '/data/DockerMounts/Sonarr/Config' do
-  owner 'root'
+directory '/home/data/DockerMounts/Sonarr/Config' do
+  owner 'Sonarr'
   group 'MediaServices'
   mode '2775'
   action :create
 end
 
-link '/data/DockerMounts/Sonarr/Media' do
-  to '/data/Media'
+link '/home/data/DockerMounts/Sonarr/Media' do
+  to '/home/data/Media'
 end
 
 docker_image 'linuxserver/sonarr' do
@@ -57,8 +57,8 @@ docker_container 'sonarr.service' do
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
-    '/data/DockerMounts/Sonarr/Config:/config',
-    '/data/DockerMounts/Sonarr/Media:/media'
+    '/home/data/DockerMounts/Sonarr/Config:/config',
+    '/home/data/DockerMounts/Sonarr/Media:/media'
   ]
   action :create
 end

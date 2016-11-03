@@ -7,17 +7,25 @@
 # All rights reserved - Do Not Redistribute
 #
 
-directory '/data/DockerMounts/NGINX' do
-  owner 'root'
-  group 'root'
+user 'NGINX' do
+  action :create
+  comment 'NGINX Service'
+  uid 2006
+  gid 2005
+  shell '/sbin/nologin'
+end
+
+directory '/home/data/DockerMounts/NGINX' do
+  owner 'NGINX'
+  group 'NGINX'
   mode '2775'
   recursive true
   action :create
 end
 
-directory '/data/DockerMounts/NGINX/Config' do
-  owner 'root'
-  group 'root'
+directory '/home/data/DockerMounts/NGINX/Config' do
+  owner 'NGINX'
+  group 'NGINX'
   mode '2775'
   action :create
 end
@@ -29,14 +37,19 @@ end
 docker_container 'nginx.service' do
   repo  'linuxserver/nginx'
   port  ['80:80', '443:443']
+  env [
+    'PUID=2006',
+    'PGID=2005'
+  ]
   links ['sonarr.service:sonarr',
          'plexrequests.service:plexr',
-         'couchpotato.service:couchpotato'
+         'couchpotato.service:couchpotato',
+         'wordpress.service:wordpress',
   ]
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
-    '/data/DockerMounts/NGINX/Config:/config'
+    '/home/data/DockerMounts/NGINX/Config:/config'
   ]
   action :create
 end

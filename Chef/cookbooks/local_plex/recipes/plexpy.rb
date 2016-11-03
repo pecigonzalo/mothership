@@ -13,8 +13,8 @@ docker_container 'plexpy.service' do
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
-    '/data/DockerMounts/PlexPy/config:/config',
-    '/data/DockerMounts/Plex/Config/Library/Application Support/Plex Media Server/Logs:/logs:ro'
+    '/home/data/DockerMounts/PlexPy/config:/config',
+    '/home/data/DockerMounts/Plex/Config/Library/Application Support/Plex Media Server/Logs:/logs:ro'
   ]
   action :create
 end

@@ -19,28 +19,28 @@ directory 'Create Media Folder for CouchPotat' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
-  path '/data/Media'
+  path '/home/data/Media'
   recursive true
   action :create
 end
 
-directory '/data/DockerMounts/CouchPotato' do
-  owner 'root'
+directory '/home/data/DockerMounts/CouchPotato' do
+  owner 'CouchPotato'
   group 'MediaServices'
   mode '2775'
   recursive true
   action :create
 end
 
-directory '/data/DockerMounts/CouchPotato/Config' do
-  owner 'root'
+directory '/home/data/DockerMounts/CouchPotato/Config' do
+  owner 'CouchPotato'
   group 'MediaServices'
   mode '2775'
   action :create
 end
 
-link '/data/DockerMounts/CouchPotato/Media' do
-  to '/data/Media'
+link '/home/data/DockerMounts/CouchPotato/Media' do
+  to '/home/data/Media'
 end
 
 docker_image 'linuxserver/couchpotato' do
@@ -57,9 +57,9 @@ docker_container 'couchpotato.service' do
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
-    '/data/DockerMounts/CouchPotato/Config:/config',
-    '/data/DockerMounts/CouchPotato/Media/Torrents:/downloads',
-    '/data/DockerMounts/CouchPotato/Media/Movies:/movies'
+    '/home/data/DockerMounts/CouchPotato/Config:/config',
+    '/home/data/DockerMounts/CouchPotato/Media/Torrents:/downloads',
+    '/home/data/DockerMounts/CouchPotato/Media/Movies:/movies'
   ]
   action :create
 end

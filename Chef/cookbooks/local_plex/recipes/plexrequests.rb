@@ -1,4 +1,4 @@
-directory '/data/DockerMounts/PlexRequests' do
+directory '/home/data/DockerMounts/PlexRequests' do
   owner 'root'
   group 'root'
   mode '2775'
@@ -6,7 +6,7 @@ directory '/data/DockerMounts/PlexRequests' do
   action :create
 end
 
-directory '/data/DockerMounts/PlexRequests/Config' do
+directory '/home/data/DockerMounts/PlexRequests/Config' do
   owner 'root'
   group 'root'
   mode '2775'
@@ -26,7 +26,7 @@ docker_container 'plexrequests.service' do
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
-    '/data/DockerMounts/PlexRequests/Config:/config'
+    '/home/data/DockerMounts/PlexRequests/Config:/config'
   ]
   action :create
 end

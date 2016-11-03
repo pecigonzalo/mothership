@@ -19,28 +19,28 @@ directory 'Create Media Folder for Plex' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
-  path '/data/Media'
+  path '/home/data/Media'
   recursive true
   action :create
 end
 
-directory '/data/DockerMounts/Plex' do
-  owner 'root'
+directory '/home/data/DockerMounts/Plex' do
+  owner 'Plex'
   group 'MediaServices'
   mode '2775'
   recursive true
   action :create
 end
 
-directory '/data/DockerMounts/Plex/Config' do
-  owner 'root'
+directory '/home/data/DockerMounts/Plex/Config' do
+  owner 'Plex'
   group 'MediaServices'
   mode '2775'
   action :create
 end
 
-link '/data/DockerMounts/Plex/Media' do
-  to '/data/Media'
+link '/home/data/DockerMounts/Plex/Media' do
+  to '/home/data/Media'
 end
 
 docker_image 'linuxserver/plex' do
@@ -57,8 +57,8 @@ docker_container 'plex.service' do
   ]
   binds [
     '/etc/localtime:/etc/localtime:ro',
-    '/data/DockerMounts/Plex/Config:/config',
-    '/data/DockerMounts/Plex/Media:/media'
+    '/home/data/DockerMounts/Plex/Config:/config',
+    '/home/data/DockerMounts/Plex/Media:/media'
   ]
   action :create
 end

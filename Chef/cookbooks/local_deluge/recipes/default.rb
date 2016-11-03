@@ -19,28 +19,28 @@ directory 'Create Media Folder for Deluge' do
   owner 'root'
   group 'MediaServices'
   mode '2775'
-  path '/data/Media'
+  path '/home/data/Media'
   recursive true
   action :create
 end
 
-directory '/data/DockerMounts/Deluge' do
-  owner 'root'
+directory '/home/data/DockerMounts/Deluge' do
+  owner 'Deluge'
   group 'MediaServices'
   mode '2775'
   recursive true
   action :create
 end
 
-directory '/data/DockerMounts/Deluge/Config' do
-  owner 'root'
+directory '/home/data/DockerMounts/Deluge/Config' do
+  owner 'Deluge'
   group 'MediaServices'
   mode '2775'
   action :create
 end
 
-link '/data/DockerMounts/Deluge/Media' do
-  to '/data/Media'
+link '/home/data/DockerMounts/Deluge/Media' do
+  to '/home/data/Media'
 end
 
 docker_image 'linuxserver/deluge' do
@@ -57,9 +57,9 @@ docker_container 'deluge.service' do
   ]
   binds [
     '/etc/localtime:/etc/localtime:ro',
-    '/data/DockerMounts/Deluge/Media/Torrents:/torrents',
-    '/data/DockerMounts/Deluge/Media/Movies:/movies',
-    '/data/DockerMounts/Deluge/Config:/config'
+    '/home/data/DockerMounts/Deluge/Media/Torrents:/torrents',
+    '/home/data/DockerMounts/Deluge/Media/Movies:/movies',
+    '/home/data/DockerMounts/Deluge/Config:/config'
   ]
   action :create
 end
