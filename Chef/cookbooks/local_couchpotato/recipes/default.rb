@@ -45,6 +45,7 @@ end
 
 docker_image 'linuxserver/couchpotato' do
   action :pull
+  notifies :redeploy, 'docker_container[couchpotato.service]', :immediately
 end
 
 docker_container 'couchpotato.service' do

@@ -14,15 +14,26 @@ DEPENDENCIES
     path: cookbooks/local_sonarr
   local_users
     path: cookbooks/local_users
+  local_wordpress
+    path: cookbooks/local_wordpress
 
 GRAPH
   apt (5.0.0)
     compat_resource (>= 12.14.7)
+  build-essential (7.0.1)
+    compat_resource (>= 12.14)
+    mingw (>= 1.1)
+    seven_zip (>= 0.0.0)
   chef-apt-docker (1.0.0)
     apt (>= 2.9.0)
   compat_resource (12.16.1)
+  dmg (3.0.0)
   docker (2.9.7)
     compat_resource (>= 12.14.2)
+  git (5.0.1)
+    build-essential (>= 0.0.0)
+    dmg (>= 0.0.0)
+    yum-epel (>= 0.0.0)
   local_couchpotato (0.1.0)
   local_deluge (0.1.0)
   local_docker (0.1.0)
@@ -32,3 +43,14 @@ GRAPH
   local_plex (0.1.0)
   local_sonarr (0.1.0)
   local_users (0.1.0)
+  local_wordpress (0.1.0)
+    git (>= 0.0.0)
+  mingw (1.2.4)
+    compat_resource (>= 0.0.0)
+    seven_zip (>= 0.0.0)
+  seven_zip (2.0.2)
+    windows (>= 1.2.2)
+  windows (2.0.2)
+  yum (4.1.0)
+  yum-epel (1.0.2)
+    yum (>= 3.6)

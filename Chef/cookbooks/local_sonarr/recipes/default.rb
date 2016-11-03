@@ -45,6 +45,7 @@ end
 
 docker_image 'linuxserver/sonarr' do
   action :pull
+  notifies :redeploy, 'docker_container[sonarr.service]', :immediately
 end
 
 docker_container 'sonarr.service' do

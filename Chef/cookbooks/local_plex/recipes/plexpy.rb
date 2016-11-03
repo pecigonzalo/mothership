@@ -1,5 +1,6 @@
 docker_image 'linuxserver/plexpy' do
   action :pull
+  notifies :redeploy, 'docker_container[plexpy.service]', :immediately
 end
 
 docker_container 'plexpy.service' do

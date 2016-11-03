@@ -45,6 +45,7 @@ end
 
 docker_image 'linuxserver/plex' do
   action :pull
+  notifies :redeploy, 'docker_container[plex.service]', :immediately
 end
 
 docker_container 'plex.service' do
@@ -61,3 +62,6 @@ docker_container 'plex.service' do
   ]
   action :create
 end
+
+include_recipe 'local_plex::plexpy'
+include_recipe 'local_plex::plexrequests'

@@ -13,12 +13,13 @@ directory '/data/DockerMounts/PlexRequests/Config' do
   action :create
 end
 
-docker_image 'lsiodev/plexrequests' do
+docker_image 'linuxserver/plexrequests' do
   action :pull
+  notifies :redeploy, 'docker_container[plexrequests.service]', :immediately
 end
 
 docker_container 'plexrequests.service' do
-  repo  'lsiodev/plexrequests'
+  repo  'linuxserver/plexrequests'
   env [
     'URL_BASE=/plexr'
   ]

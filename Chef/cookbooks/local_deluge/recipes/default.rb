@@ -43,14 +43,13 @@ link '/data/DockerMounts/Deluge/Media' do
   to '/data/Media'
 end
 
-docker_image 'pecigonzalo/deluge' do
-  tag 'dev'
+docker_image 'linuxserver/deluge' do
   action :pull
+  notifies :redeploy, 'docker_container[deluge.service]', :immediately
 end
 
 docker_container 'deluge.service' do
-  repo 'pecigonzalo/deluge'
-  tag 'dev'
+  repo 'linuxserver/deluge'
   network_mode 'host'
   env [
     'PUID=2001',
