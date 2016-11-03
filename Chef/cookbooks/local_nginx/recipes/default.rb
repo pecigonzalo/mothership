@@ -44,7 +44,7 @@ docker_container 'nginx.service' do
   links ['sonarr.service:sonarr',
          'plexrequests.service:plexr',
          'couchpotato.service:couchpotato',
-         'wordpress.service:wordpress',
+         'wordpress.service:wordpress'
   ]
   binds [
     '/dev/rtc:/dev/rtc:ro',

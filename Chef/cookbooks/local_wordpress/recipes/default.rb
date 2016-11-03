@@ -26,6 +26,7 @@ end
 docker_image 'pecigonzalo/wordpress' do
   source '/tmp/docker-wordpress'
   action :build_if_missing
+  notifies :redeploy, 'docker_container[wordpress.service]', :immediately
 end
 
 docker_image 'linuxserver/mariadb' do
@@ -83,10 +84,14 @@ docker_container 'wordpress.service' do
     'PUID=2005',
     'PGID=2005'
   ]
+  links [
+    'wordpress.db.service:db'
+  ]
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
-    '/home/data/DockerMounts/wordpress_nginx/Config:/config',
+    '/home/data/DockerMounts/NGINX/Config/backups:/config/backups',
+    '/home/data/DockerMounts/NGINX/Config/www:/config/www'
   ]
   action :create
 end
