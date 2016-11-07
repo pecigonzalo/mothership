@@ -15,7 +15,7 @@ docker_installation_package 'default' do
 end
 
 docker_service 'default' do
-  #log_driver 'journald'
+  log_driver 'journald'
   storage_driver 'aufs'
   action [:create, :start]
 end

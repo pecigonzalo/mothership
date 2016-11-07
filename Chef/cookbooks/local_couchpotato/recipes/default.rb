@@ -58,7 +58,8 @@ docker_container 'couchpotato.service' do
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
     '/home/data/DockerMounts/CouchPotato/Config:/config',
-    '/home/data/DockerMounts/CouchPotato/Media:/downloads'
+    '/home/data/DockerMounts/CouchPotato/Media:/downloads',
+    '/home/data/DockerMounts/CouchPotato/Media/Movies:/movies'
   ]
   action :create
 end
