@@ -1,5 +1,6 @@
 DEPENDENCIES
   docker (~> 2.9.1)
+  fail2ban
   local_couchpotato
     path: cookbooks/local_couchpotato
   local_deluge
@@ -30,6 +31,8 @@ GRAPH
   dmg (3.0.0)
   docker (2.9.7)
     compat_resource (>= 12.14.2)
+  fail2ban (3.1.0)
+    yum-epel (>= 0.0.0)
   git (5.0.1)
     build-essential (>= 0.0.0)
     dmg (>= 0.0.0)

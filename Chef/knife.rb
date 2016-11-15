@@ -9,7 +9,7 @@ knife[:before_converge]  = 'berks vendor -q "$(pwd)/site-cookbooks"'
 
 knife[:ssh_attribute] = 'knife_zero.host'
 knife[:use_sudo] = true
-knife[:identity_file] = '~/.ssh/Github_pecigonzalo'
+knife[:identity_file] = '~/.ssh/id_rsa'
 
 knife[:automatic_attribute_whitelist] = %w(
   fqdn

@@ -112,6 +112,8 @@ GEM
     iniparse (1.4.2)
     ipaddress (0.8.3)
     json (2.0.2)
+    knife-attribute (1.0.4)
+      chef (>= 0.11)
     knife-zero (1.17.1)
       chef (~> 12.6)
     libyajl2 (1.2.0)
@@ -252,6 +254,7 @@ DEPENDENCIES
   chef
   chefspec
   foodcritic
+  knife-attribute
   knife-zero
   rubocop
 

@@ -59,6 +59,7 @@ docker_container 'deluge.service' do
     '/etc/localtime:/etc/localtime:ro',
     '/home/data/DockerMounts/Deluge/Media/Torrents:/torrents',
     '/home/data/DockerMounts/Deluge/Media/Movies:/movies',
+    '/home/data/DockerMounts/CouchPotato/Media:/downloads',
     '/home/data/DockerMounts/Deluge/Config:/config'
   ]
   action :create
