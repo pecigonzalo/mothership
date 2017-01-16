@@ -24,7 +24,7 @@
           "bantime": 86400
         },
         "nginx-noscript": {
-          "enabled": true,
+          "enabled": false,
           "port": "http,https",
           "action": "iptables-forward-multiport[name=NoScript, port=\"http,https\"]",
           "filter": "nginx-noscript",
@@ -43,7 +43,7 @@
           "enabled": true,
           "port": "http,https",
           "action": "iptables-forward-multiport[name=NoHome, port=\"http,https\"]",
-          "filter": "nginx-nomhome",
+          "filter": "nginx-nohome",
           "logpath": "/home/data/DockerMounts/NGINX/Config/log/nginx/access.log",
           "maxretry": 2
         },
@@ -303,6 +303,41 @@
         "base_path": "/srv/git",
         "export_all": true
       }
+    },
+    "fail2ban": {
+      "loglevel": 3,
+      "socket": "/var/run/fail2ban/fail2ban.sock",
+      "logtarget": "/var/log/fail2ban.log",
+      "pidfile": "/var/run/fail2ban/fail2ban.pid",
+      "dbfile": "/var/lib/fail2ban/fail2ban.sqlite3",
+      "dbpurgeage": 86400,
+      "syslog_target": "/var/log/fail2ban.log",
+      "syslog_facility": "1",
+      "ignoreip": "127.0.0.1/8",
+      "findtime": 600,
+      "bantime": 300,
+      "maxretry": 5,
+      "backend": "polling",
+      "email": "root@localhost",
+      "sendername": "Fail2Ban",
+      "action": "action_",
+      "banaction": "iptables-multiport",
+      "mta": "sendmail",
+      "protocol": "tcp",
+      "chain": "INPUT",
+      "filters": {
+
+      },
+      "auth_log": "/var/log/auth.log",
+      "services": {
+        "ssh": {
+          "enabled": "true",
+          "port": "ssh",
+          "filter": "sshd",
+          "logpath": "/var/log/auth.log",
+          "maxretry": "6"
+        }
+      }
     }
   },
   "automatic": {
@@ -331,7 +366,10 @@
       "local_wordpress::default",
       "local_nginx",
       "local_nginx::default",
+      "fail2ban",
+      "fail2ban::default",
       "chef-apt-docker::default",
+      "local_media_server::default",
       "local_plex::plexpy",
       "local_plex::plexrequests"
     ],

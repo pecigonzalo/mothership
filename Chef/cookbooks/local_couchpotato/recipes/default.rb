@@ -7,21 +7,14 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe 'local_media_server'
+
 user 'CouchPotato' do
   action :create
   comment 'CouchPotato Service'
   uid 2002
   gid 2004
   shell '/sbin/nologin'
-end
-
-directory 'Create Media Folder for CouchPotat' do
-  owner 'root'
-  group 'MediaServices'
-  mode '2775'
-  path '/home/data/Media'
-  recursive true
-  action :create
 end
 
 directory '/home/data/DockerMounts/CouchPotato' do

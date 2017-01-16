@@ -7,21 +7,14 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe 'local_media_server'
+
 user 'Sonarr' do
   action :create
   comment 'Sonarr Service'
   uid 2003
   gid 2004
   shell '/sbin/nologin'
-end
-
-directory 'Create Media Folder for Sonarr' do
-  owner 'root'
-  group 'MediaServices'
-  mode '2775'
-  path '/home/data/Media'
-  recursive true
-  action :create
 end
 
 directory '/home/data/DockerMounts/Sonarr' do

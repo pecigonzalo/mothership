@@ -7,6 +7,8 @@ DEPENDENCIES
     path: cookbooks/local_deluge
   local_docker
     path: cookbooks/local_docker
+  local_media_server
+    path: cookbooks/local_media_server
   local_nginx
     path: cookbooks/local_nginx
   local_plex
@@ -38,13 +40,18 @@ GRAPH
     dmg (>= 0.0.0)
     yum-epel (>= 0.0.0)
   local_couchpotato (0.1.0)
+    local_media_server (>= 0.0.0)
   local_deluge (0.1.0)
+    local_media_server (>= 0.0.0)
   local_docker (0.1.0)
     chef-apt-docker (>= 0.0.0)
     docker (~> 2.9.1)
+  local_media_server (0.1.0)
   local_nginx (0.1.0)
   local_plex (0.1.0)
+    local_media_server (>= 0.0.0)
   local_sonarr (0.1.0)
+    local_media_server (>= 0.0.0)
   local_users (0.1.0)
   local_wordpress (0.1.0)
     git (>= 0.0.0)
