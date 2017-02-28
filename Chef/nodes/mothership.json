@@ -110,7 +110,7 @@
       ]
     },
     "zenmate_docker": {
-      "version": "1.12.3"
+      "version": "1.13.0-0~debian-jessie"
     },
     "windows": {
       "rubyzipversion": null
@@ -374,7 +374,7 @@
       "local_plex::plexrequests"
     ],
     "platform": "debian",
-    "platform_version": "8.6",
+    "platform_version": "8.7",
     "cloud_v2": null,
     "chef_packages": {
       "chef": {

@@ -10,8 +10,9 @@
 include_recipe 'chef-apt-docker'
 
 docker_installation_package 'default' do
-  version node['zenmate_docker']['version']
+  package_version node['zenmate_docker']['version']
   action :create
+  package_options %q|--force-yes -o Dpkg::Options::='--force-confold' -o Dpkg::Options::='--force-all'|
 end
 
 docker_service 'default' do
