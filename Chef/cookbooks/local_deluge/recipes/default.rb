@@ -38,12 +38,11 @@ end
 
 docker_image 'linuxserver/deluge' do
   action :pull
-  notifies :redeploy, 'docker_container[deluge.service]', :immediately
+  notifies :redeploy, 'docker_container[deluge]', :immediately
 end
 
-docker_container 'deluge.service' do
+docker_container 'deluge' do
   repo 'linuxserver/deluge'
-  network_mode 'host'
   env [
     'PUID=2001',
     'PGID=2004'
@@ -55,6 +54,7 @@ docker_container 'deluge.service' do
     '/home/data/DockerMounts/CouchPotato/Media:/downloads',
     '/home/data/DockerMounts/Deluge/Config:/config'
   ]
+  network_mode 'host'
   action :create
 end
 
@@ -65,10 +65,10 @@ systemd_service 'deluge' do
     wanted_by 'multi-user.target'
   end
   service do
-    exec_start '/usr/bin/docker start -a deluge.service'
-    exec_stop '/usr/bin/docker stop -t 2 deluge.service'
+    exec_start '/usr/bin/docker start -a deluge'
+    exec_stop '/usr/bin/docker stop -t 2 deluge'
     restart_sec '10'
-    restart 'always'
+    restart 'on-success'
   end
 end
 

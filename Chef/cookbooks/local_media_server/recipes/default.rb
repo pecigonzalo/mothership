@@ -44,3 +44,7 @@ directory 'Create Torrents Folder' do
   recursive true
   action :create
 end
+
+docker_network 'proxied' do
+  action :create
+end

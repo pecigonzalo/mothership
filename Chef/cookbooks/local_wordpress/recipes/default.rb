@@ -26,7 +26,7 @@ end
 docker_image 'pecigonzalo/wordpress' do
   source '/tmp/docker-wordpress'
   action :build_if_missing
-  notifies :redeploy, 'docker_container[wordpress.service]', :immediately
+  notifies :redeploy, 'docker_container[wordpress]', :immediately
 end
 
 docker_image 'linuxserver/mariadb' do
@@ -48,7 +48,7 @@ directory '/home/data/DockerMounts/wordpress_db/Config' do
   action :create
 end
 
-docker_container 'wordpress.db.service' do
+docker_container 'wordpress.db' do
   repo 'linuxserver/mariadb'
   env [
     'PUID=2005',
@@ -60,8 +60,8 @@ docker_container 'wordpress.db.service' do
     '/etc/localtime:/etc/localtime:ro',
     '/home/data/DockerMounts/wordpress_db/Config:/config'
   ]
+  network_mode 'proxied'
   action :create
-  notifies :redeploy, 'docker_container[nginx.service]', :delayed
 end
 
 systemd_service 'wordpressdb' do
@@ -71,9 +71,9 @@ systemd_service 'wordpressdb' do
     wanted_by 'multi-user.target'
   end
   service do
-    exec_start '/usr/bin/docker start -a wordpress.db.service'
-    exec_stop '/usr/bin/docker stop -t 2 wordpress.db.service'
-    restart_sec '10'
+    exec_start '/usr/bin/docker start -a wordpress.db'
+    exec_stop '/usr/bin/docker stop -t 2 wordpress.db'
+    restart_sec '15'
     restart 'always'
   end
 end
@@ -97,14 +97,14 @@ directory '/home/data/DockerMounts/wordpress_nginx/Config' do
   action :create
 end
 
-docker_container 'wordpress.service' do
+docker_container 'wordpress' do
   repo 'pecigonzalo/wordpress'
   env [
     'PUID=2005',
     'PGID=2005'
   ]
   links [
-    'wordpress.db.service:db'
+    'wordpress.db:db'
   ]
   binds [
     '/dev/rtc:/dev/rtc:ro',
@@ -112,8 +112,8 @@ docker_container 'wordpress.service' do
     '/home/data/DockerMounts/NGINX/Config/backups:/config/backups',
     '/home/data/DockerMounts/NGINX/Config/www:/config/www'
   ]
+  network_mode 'proxied'
   action :create
-  notifies :redeploy, 'docker_container[nginx.service]', :delayed
 end
 
 systemd_service 'wordpress' do
@@ -123,8 +123,8 @@ systemd_service 'wordpress' do
     wanted_by 'multi-user.target'
   end
   service do
-    exec_start '/usr/bin/docker start -a wordpress.service'
-    exec_stop '/usr/bin/docker stop -t 2 wordpress.service'
+    exec_start '/usr/bin/docker start -a wordpress'
+    exec_stop '/usr/bin/docker stop -t 2 wordpress'
     restart_sec '10'
     restart 'always'
   end

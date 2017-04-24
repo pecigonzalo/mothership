@@ -38,10 +38,10 @@ end
 
 docker_image 'linuxserver/radarr' do
   action :pull
-  notifies :redeploy, 'docker_container[radarr.service]', :immediately
+  notifies :redeploy, 'docker_container[radarr]', :immediately
 end
 
-docker_container 'radarr.service' do
+docker_container 'radarr' do
   repo 'linuxserver/radarr'
   env [
     'PUID=2010',
@@ -53,6 +53,24 @@ docker_container 'radarr.service' do
     '/home/data/DockerMounts/radarr/Config:/config',
     '/home/data/DockerMounts/radarr/Media:/media'
   ]
+  network_mode 'proxied'
   action :create
-  notifies :redeploy, 'docker_container[nginx.service]', :delayed
+end
+
+systemd_service 'radarr' do
+  description 'Radarr Server'
+  after %w(docker.service)
+  install do
+    wanted_by 'multi-user.target'
+  end
+  service do
+    exec_start '/usr/bin/docker start -a radarr'
+    exec_stop '/usr/bin/docker stop -t 2 radarr'
+    restart_sec '10'
+    restart 'always'
+  end
+end
+
+service 'radarr' do
+  action [:enable, :start]
 end

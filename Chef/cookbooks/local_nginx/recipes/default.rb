@@ -34,7 +34,7 @@ docker_image 'linuxserver/nginx' do
   action :pull
 end
 
-docker_container 'nginx.service' do
+docker_container 'nginx' do
   repo  'linuxserver/nginx'
   port  ['80:80', '443:443']
   env [
@@ -42,36 +42,29 @@ docker_container 'nginx.service' do
     'PGID=2005',
     'ADVANCED_DISABLEUPDATES=true'
   ]
-  links [
-    'sonarr.service:sonarr',
-    'radarr.service:radarr',
-    'plexrequests.service:plexr',
-    'couchpotato.service:couchpotato',
-    'wordpress.service:wordpress',
-    'wordpress.db.service:db'
-  ]
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
     '/home/data/DockerMounts/NGINX/Config:/config'
   ]
+  network_mode 'proxied'
   action :create
 end
 
-systemd_service 'NGINX' do
+systemd_service 'nginx' do
   description 'NGINX Server'
   after %w(docker.service)
   install do
     wanted_by 'multi-user.target'
   end
   service do
-    exec_start '/usr/bin/docker start -a nginx.service'
-    exec_stop '/usr/bin/docker stop -t 2 nginx.service'
+    exec_start '/usr/bin/docker start -a nginx'
+    exec_stop '/usr/bin/docker stop -t 2 nginx'
     restart_sec '10'
     restart 'always'
   end
 end
 
-service 'NGINX' do
+service 'nginx' do
   action [:enable, :start]
 end

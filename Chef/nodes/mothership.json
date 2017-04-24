@@ -2,7 +2,7 @@
   "name": "mothership",
   "normal": {
     "knife_zero": {
-      "host": "mothership.julesinabox.com"
+      "host": "ssh.julesinabox.com"
     },
     "tags": [
 
@@ -605,8 +605,6 @@
       "local_sonarr::default",
       "local_radarr",
       "local_radarr::default",
-      "local_couchpotato",
-      "local_couchpotato::default",
       "local_wordpress",
       "local_wordpress::default",
       "local_nginx",
@@ -614,9 +612,7 @@
       "fail2ban",
       "fail2ban::default",
       "chef-apt-docker::default",
-      "local_media_server::default",
-      "local_plex::plexpy",
-      "local_plex::plexrequests"
+      "local_media_server::default"
     ],
     "platform": "debian",
     "platform_version": "8.7",

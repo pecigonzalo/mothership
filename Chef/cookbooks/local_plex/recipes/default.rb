@@ -38,12 +38,11 @@ end
 
 docker_image 'linuxserver/plex' do
   action :pull
-  notifies :redeploy, 'docker_container[plex.service]', :immediately
+  notifies :redeploy, 'docker_container[plex]', :immediately
 end
 
-docker_container 'plex.service' do
+docker_container 'plex' do
   repo 'linuxserver/plex'
-  network_mode 'host'
   env [
     'PUID=2000',
     'PGID=2004',
@@ -54,8 +53,27 @@ docker_container 'plex.service' do
     '/home/data/DockerMounts/Plex/Config:/config',
     '/home/data/DockerMounts/Plex/Media:/media'
   ]
+  network_mode 'proxied'
   action :create
 end
 
-include_recipe 'local_plex::plexpy'
-include_recipe 'local_plex::plexrequests'
+systemd_service 'plex' do
+  description 'Plex Server'
+  after %w(docker.service)
+  install do
+    wanted_by 'multi-user.target'
+  end
+  service do
+    exec_start '/usr/bin/docker start -a plex'
+    exec_stop '/usr/bin/docker stop -t 2 plex'
+    restart_sec '10'
+    restart 'always'
+  end
+end
+
+service 'plex' do
+  action [:enable, :start]
+end
+
+# include_recipe 'local_plex::plexpy'
+# include_recipe 'local_plex::plexrequests'

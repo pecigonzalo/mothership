@@ -1,9 +1,9 @@
 docker_image 'linuxserver/plexpy' do
   action :pull
-  notifies :redeploy, 'docker_container[plexpy.service]', :immediately
+  notifies :redeploy, 'docker_container[plexpy]', :immediately
 end
 
-docker_container 'plexpy.service' do
+docker_container 'plexpy' do
   repo  'linuxserver/plexpy'
   network_mode 'host'
   env [

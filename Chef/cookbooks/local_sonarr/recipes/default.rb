@@ -38,10 +38,10 @@ end
 
 docker_image 'linuxserver/sonarr' do
   action :pull
-  notifies :redeploy, 'docker_container[sonarr.service]', :immediately
+  notifies :redeploy, 'docker_container[sonarr]', :immediately
 end
 
-docker_container 'sonarr.service' do
+docker_container 'sonarr' do
   repo 'linuxserver/sonarr'
   env [
     'PUID=2003',
@@ -53,6 +53,24 @@ docker_container 'sonarr.service' do
     '/home/data/DockerMounts/Sonarr/Config:/config',
     '/home/data/DockerMounts/Sonarr/Media:/media'
   ]
+  network_mode 'proxied'
   action :create
-  notifies :redeploy, 'docker_container[nginx.service]', :delayed
+end
+
+systemd_service 'sonarr' do
+  description 'Sonarr Service'
+  after %w(docker.service)
+  install do
+    wanted_by 'multi-user.target'
+  end
+  service do
+    exec_start '/usr/bin/docker start -a sonarr'
+    exec_stop '/usr/bin/docker stop -t 2 sonarr'
+    restart_sec '10'
+    restart 'on-success'
+  end
+end
+
+service 'sonarr' do
+  action [:enable, :start]
 end

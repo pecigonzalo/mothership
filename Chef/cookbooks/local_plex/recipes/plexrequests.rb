@@ -15,10 +15,10 @@ end
 
 docker_image 'linuxserver/plexrequests' do
   action :pull
-  notifies :redeploy, 'docker_container[plexrequests.service]', :immediately
+  notifies :redeploy, 'docker_container[plexrequests]', :immediately
 end
 
-docker_container 'plexrequests.service' do
+docker_container 'plexrequests' do
   repo  'linuxserver/plexrequests'
   env [
     'URL_BASE=/plexr'
@@ -29,5 +29,4 @@ docker_container 'plexrequests.service' do
     '/home/data/DockerMounts/PlexRequests/Config:/config'
   ]
   action :create
-  notifies :redeploy, 'docker_container[nginx.service]', :delayed
 end
