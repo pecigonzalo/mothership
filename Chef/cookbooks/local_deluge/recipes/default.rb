@@ -57,3 +57,21 @@ docker_container 'deluge.service' do
   ]
   action :create
 end
+
+systemd_service 'deluge' do
+  description 'Deluge Server'
+  after %w(docker.service)
+  install do
+    wanted_by 'multi-user.target'
+  end
+  service do
+    exec_start '/usr/bin/docker start -a deluge.service'
+    exec_stop '/usr/bin/docker stop -t 2 deluge.service'
+    restart_sec '10'
+    restart 'always'
+  end
+end
+
+service 'deluge' do
+  action [:enable, :start]
+end

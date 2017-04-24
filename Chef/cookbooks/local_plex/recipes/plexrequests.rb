@@ -29,4 +29,5 @@ docker_container 'plexrequests.service' do
     '/home/data/DockerMounts/PlexRequests/Config:/config'
   ]
   action :create
+  notifies :redeploy, 'docker_container[nginx.service]', :delayed
 end

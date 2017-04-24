@@ -44,6 +44,7 @@ docker_container 'nginx.service' do
   ]
   links [
     'sonarr.service:sonarr',
+    'radarr.service:radarr',
     'plexrequests.service:plexr',
     'couchpotato.service:couchpotato',
     'wordpress.service:wordpress',
@@ -55,4 +56,22 @@ docker_container 'nginx.service' do
     '/home/data/DockerMounts/NGINX/Config:/config'
   ]
   action :create
+end
+
+systemd_service 'NGINX' do
+  description 'NGINX Server'
+  after %w(docker.service)
+  install do
+    wanted_by 'multi-user.target'
+  end
+  service do
+    exec_start '/usr/bin/docker start -a nginx.service'
+    exec_stop '/usr/bin/docker stop -t 2 nginx.service'
+    restart_sec '10'
+    restart 'always'
+  end
+end
+
+service 'NGINX' do
+  action [:enable, :start]
 end

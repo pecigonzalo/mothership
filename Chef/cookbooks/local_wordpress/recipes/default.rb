@@ -58,9 +58,28 @@ docker_container 'wordpress.db.service' do
   binds [
     '/dev/rtc:/dev/rtc:ro',
     '/etc/localtime:/etc/localtime:ro',
-    '/home/data/DockerMounts/wordpress_db/Config:/config',
+    '/home/data/DockerMounts/wordpress_db/Config:/config'
   ]
   action :create
+  notifies :redeploy, 'docker_container[nginx.service]', :delayed
+end
+
+systemd_service 'wordpressdb' do
+  description 'Wordpress DB'
+  after %w(docker.service)
+  install do
+    wanted_by 'multi-user.target'
+  end
+  service do
+    exec_start '/usr/bin/docker start -a wordpress.db.service'
+    exec_stop '/usr/bin/docker stop -t 2 wordpress.db.service'
+    restart_sec '10'
+    restart 'always'
+  end
+end
+
+service 'wordpressdb' do
+  action [:enable, :start]
 end
 
 directory '/home/data/DockerMounts/wordpress_nginx' do
@@ -94,4 +113,23 @@ docker_container 'wordpress.service' do
     '/home/data/DockerMounts/NGINX/Config/www:/config/www'
   ]
   action :create
+  notifies :redeploy, 'docker_container[nginx.service]', :delayed
+end
+
+systemd_service 'wordpress' do
+  description 'Wordpress Web'
+  after %w(docker.service)
+  install do
+    wanted_by 'multi-user.target'
+  end
+  service do
+    exec_start '/usr/bin/docker start -a wordpress.service'
+    exec_stop '/usr/bin/docker stop -t 2 wordpress.service'
+    restart_sec '10'
+    restart 'always'
+  end
+end
+
+service 'wordpress' do
+  action [:enable, :start]
 end

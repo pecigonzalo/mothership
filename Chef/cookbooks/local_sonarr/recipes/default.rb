@@ -54,4 +54,5 @@ docker_container 'sonarr.service' do
     '/home/data/DockerMounts/Sonarr/Media:/media'
   ]
   action :create
+  notifies :redeploy, 'docker_container[nginx.service]', :delayed
 end

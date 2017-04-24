@@ -46,7 +46,8 @@ docker_container 'plex.service' do
   network_mode 'host'
   env [
     'PUID=2000',
-    'PGID=2004'
+    'PGID=2004',
+    'VERSION=1.3.4.3285-b46e0ea'
   ]
   binds [
     '/etc/localtime:/etc/localtime:ro',

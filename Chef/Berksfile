@@ -4,6 +4,7 @@ source 'https://supermarket.chef.io'
 
 cookbook 'docker'
 cookbook 'fail2ban'
+cookbook 'systemd'
 
 # Local cookbooks
 list = Dir.entries('./cookbooks/').select { |f| !File.directory? f }

@@ -55,4 +55,5 @@ docker_container 'couchpotato.service' do
     '/home/data/DockerMounts/CouchPotato/Media/Movies:/movies'
   ]
   action :create
+  notifies :redeploy, 'docker_container[nginx.service]', :delayed
 end
