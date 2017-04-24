@@ -639,7 +639,6 @@
     "recipe[local_deluge]",
     "recipe[local_sonarr]",
     "recipe[local_radarr]",
-    "recipe[local_couchpotato]",
     "recipe[local_wordpress]",
     "recipe[local_nginx]",
     "recipe[fail2ban]"
