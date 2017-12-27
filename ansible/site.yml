@@ -1,0 +1,12 @@
+---
+- name: Mothership
+  hosts: mothership
+
+  roles:
+    - common
+    - role: angstwad.docker_ubuntu
+      daemon_json:
+        storage-driver: overlay2
+        userland-proxy: false
+    - wordpress
+    - media-server

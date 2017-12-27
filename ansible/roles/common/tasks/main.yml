@@ -1,0 +1,88 @@
+---
+- name: Install base packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+       - git
+       - bc
+       - jq
+       - wget
+       - curl
+       - unattended-upgrades
+       - apt-listchanges
+       - apt-transport-https
+       - ca-certificates
+       - gnupg2
+       - software-properties-common
+       - acpid
+       - dkms
+       - python-pip
+       - dnsutils
+       - iotop
+       - htop
+       - glances
+       - iftop
+       - ngrep
+       - iptraf
+       - tree
+       - ncdu
+       - sysstat
+       - mlocate
+       - ntpdate
+       - iptables-persistent
+       - vim
+       - tmux
+
+- name: Remove useless packages from the cache
+  apt:
+    autoclean: yes
+
+- name: Remove dependencies that are no longer required
+  apt:
+    autoremove: yes
+
+- name: Mount Data volume
+  mount:
+    path: /data
+    src: UUID="b584c764-ec62-4014-9899-b5ed6d23c60c"
+    fstype: xfs
+    state: present
+
+- iptables:
+    action: insert
+    chain: INPUT
+    in_interface: lo
+    jump: ACCEPT
+
+- iptables:
+    action: insert
+    chain: INPUT
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
+
+- iptables:
+    action: insert
+    chain: INPUT
+    protocol: tcp
+    destination_port: 22
+    jump: ACCEPT
+
+- iptables:
+    chain: INPUT
+    jump: INPUT_ALLOW
+
+- iptables:
+    chain: INPUT
+    jump: INPUT_BLOCK
+
+- iptables:
+    chain: INPUT_BLOCK
+    jump: DROP
+
+- iptables:
+    action: insert
+    chain: INPUT_BLOCK
+    ctstate: INVALID
+    match: conntrack
+    jump: DROP

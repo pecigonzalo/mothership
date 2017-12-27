@@ -1,0 +1,65 @@
+- name: Create Deluge structure
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    recurse: true
+  with_items:
+    - path: '/data/DockerMounts/Deluge'
+      mode: 770
+      owner: Deluge
+      group: MediaServices
+    - path: '/data/DockerMounts/Deluge/Config'
+      mode: 770
+      owner: Deluge
+      group: MediaServices
+
+- name: Create Deluge symlink
+  file:
+    src: /data/Media
+    dest: /data/DockerMounts/Deluge/Media
+    state: link
+
+- name: Create Deluge Web TCP IPTable rules
+  iptables:
+    chain: INPUT_ALLOW
+    protocol: tcp
+    destination_port: 8112
+    jump: ACCEPT
+
+- name: Create Deluge TCP IPTable rules
+  iptables:
+    chain: INPUT_ALLOW
+    protocol: tcp
+    destination_port: 58000:58030
+    jump: ACCEPT
+
+- name: Create Deluge UDP IPTable rules
+  iptables:
+    chain: INPUT_ALLOW
+    protocol: udp
+    destination_port: 58000:58030
+    jump: ACCEPT
+
+- name: Run Deluge docker-compose
+  docker_service:
+    project_name: deluge
+    definition:
+      version: '2'
+
+      services:
+        app:
+          image: linuxserver/deluge
+          restart: always
+          environment:
+            - PUID=2001
+            - PGID=2004
+          volumes:
+            - '/dev/rtc:/dev/rtc:ro'
+            - '/data/DockerMounts/Deluge/Media/Torrents:/torrents'
+            - '/data/DockerMounts/Deluge/Media/Movies:/movies'
+            - '/data/DockerMounts/Deluge/Media:/downloads'
+            - '/data/DockerMounts/Deluge/Config:/config'
+          network_mode: host

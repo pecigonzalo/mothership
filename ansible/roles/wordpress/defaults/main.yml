@@ -1,0 +1,3 @@
+---
+wordpress_docker_git: 'https://github.com/pecigonzalo/docker-wordpress.git'
+wordpress_docker_git_local: '/tmp/docker-wordpress'
