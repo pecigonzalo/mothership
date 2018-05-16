@@ -5,16 +5,18 @@
     mode: "{{ item.mode }}"
     owner: "{{ item.owner }}"
     group: "{{ item.group }}"
-    recurse: true
+    recurse: "{{ item.recurse }}"
   with_items:
     - path: '/data/DockerMounts/Sonarr'
       mode: 770
       owner: Sonarr
       group: MediaServices
+      recurse: False
     - path: '/data/DockerMounts/Sonarr/Config'
       mode: 770
       owner: Sonarr
       group: MediaServices
+      recurse: True
 
 
 - name: Create Sonarr symlink

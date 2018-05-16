@@ -5,16 +5,18 @@
     mode: "{{ item.mode }}"
     owner: "{{ item.owner }}"
     group: "{{ item.group }}"
-    recurse: true
+    recurse: "{{ item.recurse }}"
   with_items:
     - path: '/data/DockerMounts/Radarr'
       mode: 770
       owner: Radarr
       group: MediaServices
+      recurse: False
     - path: '/data/DockerMounts/Radarr/Config'
       mode: 770
       owner: Radarr
       group: MediaServices
+      recurse: False
 
 - name: Create Radarr symlink
   file:

@@ -5,16 +5,23 @@
     mode: "{{ item.mode }}"
     owner: "{{ item.owner }}"
     group: "{{ item.group }}"
-    recurse: true
+    recurse: "{{ item.recurse }}"
   with_items:
     - path: '/data/DockerMounts/Plex'
       mode: 770
       owner: Plex
       group: MediaServices
+      recurse: False
     - path: '/data/DockerMounts/Plex/Config'
       mode: 770
       owner: Plex
       group: MediaServices
+      recurse: True
+    - path: '/data/DockerMounts/tautulli/Config'
+      mode: 770
+      owner: Plex
+      group: MediaServices
+      recurse: True
 
 - name: Create Plex symlink
   file:
