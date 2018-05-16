@@ -1,9 +1,0 @@
-source 'https://rubygems.org'
-
-gem 'chef'
-gem 'berkshelf'
-gem 'foodcritic'
-gem 'rubocop'
-gem 'chefspec'
-gem 'knife-zero'
-gem 'knife-attribute'
