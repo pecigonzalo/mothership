@@ -1,0 +1,102 @@
+version: "3.5"
+networks:
+  wordpress:
+  db:
+    external: true
+    name: wordpress_db
+  plex:
+
+services:
+  nginx:
+    image: linuxserver/nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - PUID=2006
+      - PGID=2005
+      - ADVANCED_DISABLEUPDATES=true
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/NGINX/Config:/config'
+      - '/data/DockerMounts/letsencrypt:/letsencrypt'
+    networks:
+      db:
+      wordpress:
+      plex:
+
+  tautulli:
+    image: tautulli/tautulli
+    restart: unless-stopped
+    environment:
+      - PUID=2000
+      - PGID=2004
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/tautulli/Config:/config'
+      - '/data/DockerMounts/Plex/Config/Library/Application Support/Plex Media Server/Logs:/logs'
+    networks:
+      plex:
+
+  plex:
+    image: plexinc/pms-docker
+    restart: unless-stopped
+    ports:
+      - "32400:32400"
+    environment:
+      - PLEX_UID=2000
+      - PLEX_GID=2004
+      - ADVERTISE_IP=https://mothership.julesinabox.com:32400
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/Plex/Config:/config'
+      - '/data/DockerMounts/Plex/Media:/media'
+    networks:
+      plex:
+
+  radarr:
+    image: linuxserver/radarr
+    restart: unless-stopped
+    environment:
+      - PUID=2003
+      - PGID=2004
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/Radarr/Config:/config'
+      - '/data/DockerMounts/Radarr/Media:/media'
+    networks:
+      plex:
+
+  sonarr:
+    image: linuxserver/sonarr
+    restart: unless-stopped
+    environment:
+      - PUID=2002
+      - PGID=2004
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/Sonarr/Config:/config'
+      - '/data/DockerMounts/Sonarr/Media:/media'
+    networks:
+      plex:
+
+  deluge:
+    image: linuxserver/deluge
+    restart: unless-stopped
+    environment:
+      - PUID=2001
+      - PGID=2004
+      - UMASK_SET=0002
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/data/DockerMounts/Deluge/Media/Torrents:/torrents'
+      - '/data/DockerMounts/Deluge/Media/Movies:/movies'
+      - '/data/DockerMounts/Deluge/Media:/downloads'
+      - '/data/DockerMounts/Deluge/Config:/config'
+    network_mode: host

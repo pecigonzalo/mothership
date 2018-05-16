@@ -24,29 +24,5 @@
     src: /data/Media
     dest: /data/DockerMounts/Sonarr/Media
     state: link
-
-
-- name: Run Sonarr docker-compose
-  docker_service:
-    project_name: sonarr
-    definition:
-      version: '2'
-      networks:
-        sonarr:
-
-      services:
-        app:
-          image: linuxserver/sonarr
-          restart: always
-          environment:
-            - PUID=2002
-            - PGID=2004
-          volumes:
-            - '/dev/rtc:/dev/rtc:ro'
-            - '/etc/localtime:/etc/localtime:ro'
-            - '/data/DockerMounts/Sonarr/Config:/config'
-            - '/data/DockerMounts/Sonarr/Media:/media'
-          networks:
-            sonarr:
-              aliases:
-                - sonarr
+    owner: Sonarr
+    group: MediaServices

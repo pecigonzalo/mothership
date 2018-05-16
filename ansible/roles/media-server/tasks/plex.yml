@@ -30,32 +30,3 @@
     owner: Plex
     group: MediaServices
     state: link
-
-
-- name: Run Plex docker-compose
-  docker_service:
-    project_name: plex
-    definition:
-      version: '2'
-
-      services:
-        app:
-          image: plexinc/pms-docker
-          restart: always
-          ports:
-            - "32400:32400"
-            - "3005:3005"
-            - "8324:8324"
-            - "32469:32469"
-            - "1900:1900/udp"
-            - "32410-32414:32410-32414/udp"
-          environment:
-            - PLEX_UID=2000
-            - PLEX_GID=2004
-            - ADVERTISE_IP=https://mothership.julesinabox.com:32400
-          volumes:
-            - '/dev/rtc:/dev/rtc:ro'
-            - '/etc/localtime:/etc/localtime:ro'
-            - '/data/DockerMounts/Plex/Config:/config'
-            - '/data/DockerMounts/Plex/Media:/media'
-            - '/dev/shm:/transcode'

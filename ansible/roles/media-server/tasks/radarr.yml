@@ -23,29 +23,5 @@
     src: /data/Media
     dest: /data/DockerMounts/Radarr/Media
     state: link
-
-
-- name: Run Radarr docker-compose
-  docker_service:
-    project_name: radarr
-    definition:
-      version: '2'
-      networks:
-        radarr:
-
-      services:
-        app:
-          image: linuxserver/radarr
-          restart: always
-          environment:
-            - PUID=2003
-            - PGID=2004
-          volumes:
-            - '/dev/rtc:/dev/rtc:ro'
-            - '/etc/localtime:/etc/localtime:ro'
-            - '/data/DockerMounts/Radarr/Config:/config'
-            - '/data/DockerMounts/Radarr/Media:/media'
-          networks:
-            radarr:
-              aliases:
-                - radarr
+    owner: Radarr
+    group: MediaServices
