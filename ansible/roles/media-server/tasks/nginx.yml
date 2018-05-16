@@ -11,8 +11,3 @@
       mode: 770
       owner: NGINX
       group: NGINX
-    - path: '/data/DockerMounts/NGINX/Config'
-      mode: 770
-      owner: NGINX
-      group: NGINX
-

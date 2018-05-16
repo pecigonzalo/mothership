@@ -23,24 +23,26 @@
     src: /data/Media
     dest: /data/DockerMounts/Deluge/Media
     state: link
+    owner: Deluge
+    group: MediaServices
 
 - name: Create Deluge Web TCP IPTable rules
   iptables:
-    chain: INPUT_ALLOW
+    chain: INPUT
     protocol: tcp
     destination_port: 8112
     jump: ACCEPT
 
 - name: Create Deluge TCP IPTable rules
   iptables:
-    chain: INPUT_ALLOW
+    chain: INPUT
     protocol: tcp
     destination_port: 58000:58030
     jump: ACCEPT
 
 - name: Create Deluge UDP IPTable rules
   iptables:
-    chain: INPUT_ALLOW
+    chain: INPUT
     protocol: udp
     destination_port: 58000:58030
     jump: ACCEPT
