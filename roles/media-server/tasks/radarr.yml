@@ -16,7 +16,7 @@
       mode: 770
       owner: Radarr
       group: MediaServices
-      recurse: False
+      recurse: True
 
 - name: Create Radarr symlink
   file:

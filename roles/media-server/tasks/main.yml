@@ -24,6 +24,7 @@
     - { name: 'Deluge', uid: 2001 }
     - { name: 'Sonarr', uid: 2002 }
     - { name: 'Radarr', uid: 2003 }
+    - { name: 'NGINX', uid: 2006 }
 
 - name: Configure Plex
   include: plex.yml
@@ -37,6 +38,11 @@
 
 - name: Configure Radarr
   include: radarr.yml
+  tags:
+    - docker-compose
+
+- name: Configure Ombi
+  include: ombi.yml
   tags:
     - docker-compose
 

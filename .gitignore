@@ -1,6 +1,3 @@
 # Ignore chef zero items
-Chef/site-cookbooks/
-Chef/vendor/
-Chef/clients/
-ansible/remote_roles
-ansible/site.retry
+remote_roles
+site.retry
