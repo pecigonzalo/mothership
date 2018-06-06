@@ -1,5 +1,0 @@
----
-- name: Build pecigonzalo/wordpress image
-  docker_image:
-     path: "{{ wordpress_docker_git_local }}"
-     name: pecigonzalo/wordpress

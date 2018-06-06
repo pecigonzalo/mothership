@@ -1,3 +1,6 @@
-# Ignore chef zero items
+# Ignore Ansible
 remote_roles
 site.retry
+
+# Ignore Config
+settings.yml

@@ -1,0 +1,41 @@
+---
+- name: "Setting CloudFlare DNS Record"
+  include_role:
+    name: cloudflare
+  vars:
+    subdomain: radarr
+
+- name: Create Radarr structure
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0775
+    owner: MediaServices
+    group: MediaServices
+    recurse: False
+  with_items:
+    - path: '/data/DockerMounts/Radarr'
+    - path: '/data/DockerMounts/Radarr/Config'
+
+- name: Create and start container
+  docker_container:
+    name: radarr
+    image: linuxserver/radarr
+    pull: yes
+    env:
+      PUID: 2000
+      PGID: 2000
+      VIRTUAL_HOST: "radarr.{{domain}}"
+      VIRTUAL_PORT: 7878
+      LETSENCRYPT_HOST: "radarr.{{domain}}"
+      LETSENCRYPT_EMAIL: "{{email}}"
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/Radarr/Config:/config'
+      - '/data/Media:/media'
+    networks:
+      - name: proxy
+      - name: plex
+    restart_policy: unless-stopped
+    state: started

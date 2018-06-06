@@ -1,0 +1,42 @@
+- name: "Setting CloudFlare DNS Record"
+  include_role:
+    name: cloudflare
+  vars:
+    subdomain: control
+
+- name: Create unifi structure
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0775
+    owner: root
+    group: root
+    recurse: False
+  with_items:
+    - path: '/data/DockerMounts/unifi'
+
+- name: Create and start container
+  docker_container:
+    name: unifi
+    image: "linuxserver/unifi"
+    pull: yes
+    published_ports:
+      - "8843:8843"
+      - "8080:8080"
+      - "8081:8081"
+      - "8880:8880"
+      - "3478:3478/udp"
+    env:
+      VIRTUAL_HOST: "control.{{domain}}"
+      VIRTUAL_PORT: 8443
+      VIRTUAL_PROTO: "https"
+      LETSENCRYPT_HOST: "control.{{domain}}"
+      LETSENCRYPT_EMAIL: "{{email}}"
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/unifi:/config'
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+    state: started

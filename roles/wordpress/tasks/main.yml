@@ -1,102 +1,87 @@
+---
+- name: Add Media Server Groups
+  group:
+    name: NGINX
+    gid: 2001
+    state: present
+
 - name: Add Wordpress Server Users
-  tags:
-    - users
   user:
-    name: "{{ item.name }}"
-    uid: "{{ item.uid }}"
+    name: NGINX
+    uid: 2001
     shell: /bin/false
     group: NGINX
     state: present
-  with_items:
-    - { name: 'Wordpress', uid: 2005 }
-    - { name: 'NGINX', uid: 2006 }
 
 - name: Create Wordpress structure
   file:
     path: "{{ item.path }}"
     state: directory
-    mode: "{{ item.mode }}"
-    owner: "{{ item.owner }}"
-    group: "{{ item.group }}"
+    mode: 0775
+    owner: 'NGINX'
+    group: 'NGINX'
     recurse: true
   with_items:
     - path: '/data/DockerMounts/wordpress_db'
-      mode: 770
-      owner: 'Wordpress'
-      group: 'NGINX'
     - path: '/data/DockerMounts/wordpress_db/Config'
-      mode: 770
-      owner: Wordpress
-      group: NGINX
-    - path: '/data/DockerMounts/wordpress_nginx'
-      mode: 770
-      owner: Wordpress
-      group: NGINX
-    - path: '/data/DockerMounts/wordpress_nginx/Config'
-      mode: 770
-      owner: Wordpress
-      group: NGINX
-    - path: '/data/DockerMounts/NGINX/Config'
-      mode: 770
-      owner: NGINX
-      group: NGINX
-    - path: '/data/DockerMounts/NGINX/Config'
-      mode: 770
-      owner: NGINX
-      group: NGINX
+    - path: '/data/DockerMounts/wordpress'
+    - path: '/data/DockerMounts/wordpress/conf.d'
+    - path: '/data/DockerMounts/wordpress/backups'
 
-- name: Clone Wordpress directory
-  git:
-    repo: "{{ wordpress_docker_git }}"
-    dest: "{{ wordpress_docker_git_local }}"
-  notify:
-    - Build pecigonzalo/wordpress image
+- name: Create and start DB container
+  docker_container:
+    name: wordpress-db
+    image: linuxserver/mariadb
+    pull: yes
+    env:
+      PUID: 2001
+      PGID: 2001
+      MYSQL_ROOT_PASSWORD: wordpress
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/wordpress_db/Config:/config'
+    restart_policy: unless-stopped
+    networks:
+      - name: wordpress
+    state: started
 
-- name: Build pecigonzalo/wordpress image
-  docker_image:
-     path: "{{ wordpress_docker_git_local }}"
-     name: pecigonzalo/wordpress
+- name: Create and start Wordpress FPM container
+  docker_container:
+    name: wordpress-julesinabox
+    image: wordpress
+    pull: yes
+    env:
+      VIRTUAL_HOST: "www.{{domain}},{{domain}}"
+      LETSENCRYPT_HOST: "www.{{domain}},{{domain}}"
+      LETSENCRYPT_EMAIL: "{{email}}"
+      CERT_NAME: "www.julesinabox.com"
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/wordpress/www/julesinabox:/var/www/html'
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+      - name: wordpress
+    state: started
 
-- name: Run wordpress docker-compose
-  tags:
-    - docker-compose
-  docker_service:
-    project_name: wordpress
-    definition:
-      version: '2'
-      networks:
-        wordpress:
-        db:
-
-      services:
-        wordpress.db:
-          image: linuxserver/mariadb
-          restart: always
-          environment:
-            - PUID=2005
-            - PGID=2005
-            - MYSQL_ROOT_PASSWORD=wordpress
-          volumes:
-            - '/dev/rtc:/dev/rtc:ro'
-            - '/etc/localtime:/etc/localtime:ro'
-            - '/data/DockerMounts/wordpress_db/Config:/config'
-          networks:
-            db:
-              aliases:
-                - db
-        web:
-          image: pecigonzalo/wordpress
-          restart: always
-          environment:
-            - PUID=2005
-            - PGID=2005
-          volumes:
-            - '/dev/rtc:/dev/rtc:ro'
-            - '/etc/localtime:/etc/localtime:ro'
-            - '/data/DockerMounts/NGINX/Config/backups:/config/ckups'
-            - '/data/DockerMounts/NGINX/Config/www:/config/www'
-          networks:
-            wordpress:
-              aliases:
-                - wordpress
-            db:
+- name: Create and start Wordpress FPM container
+  docker_container:
+    name: wordpress-thekiwidiaries
+    image: wordpress
+    pull: yes
+    env:
+      VIRTUAL_HOST: "www.thekiwidiaries.com,thekiwidiaries.com"
+      LETSENCRYPT_HOST: "www.thekiwidiaries.com,thekiwidiaries.com"
+      LETSENCRYPT_EMAIL: "{{email}}"
+      CERT_NAME: "www.thekiwidiaries.com"
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/wordpress/www/thekiwidiaries:/var/www/html'
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+      - name: wordpress
+    state: started

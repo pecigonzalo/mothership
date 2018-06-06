@@ -1,0 +1,67 @@
+- name: "Setting CloudFlare DNS Record"
+  include_role:
+    name: cloudflare
+  vars:
+    subdomain: plex
+
+- name: Create Plex directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0775
+    owner: MediaServices
+    group: MediaServices
+    recurse: False
+  with_items:
+    - path: '/data/DockerMounts/Plex'
+    - path: '/data/DockerMounts/Plex/Config'
+
+- name: Check Preferences.xml exists
+  stat:
+    path: "/data/DockerMounts/Plex/Config/Library/Application Support/Plex Media Server/Preferences.xml"
+  register: plex_prefs
+
+- name: Check /dev/dri exists
+  stat:
+    path: "/dev/dri"
+  register: dev_dri
+
+- name: Ask user for his plex server claim id
+  pause:
+    prompt: "To continue the plex installation, you must visit https://plex.tv/claim and retrieve a claim token, paste it below and press enter"
+  register: plex_claim
+  when: plex_prefs.stat.exists == False
+
+- debug: msg="Using plex claim token {{plex_claim.user_input}}"
+  when: plex_prefs.stat.exists == False
+
+- name: Create and start container
+  docker_container:
+    name: plex
+    image: "plexinc/pms-docker"
+    pull: yes
+    published_ports:
+      - "32400:32400"
+    env:
+      PLEX_UID: 2000
+      PLEX_GID: 2000
+      PLEX_CLAIM: "{{plex_claim.user_input| default (omit)}}"
+      CHANGE_CONFIG_DIR_OWNERSHIP: false
+      ADVERTISE_IP: "http://plex.{{domain}}:80/,https://plex.{{domain}}:443/"
+      VIRTUAL_HOST: "plex.{{domain}}"
+      VIRTUAL_PORT: 32400
+      LETSENCRYPT_HOST: "plex.{{domain}}"
+      LETSENCRYPT_EMAIL: "{{email}}"
+      HTTPS_METHOD: noredirect
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/Plex/Config:/config'
+      - '/data/Media:/media'
+      - '/tmp:/tmp'
+    devices: "{{ '/dev/dri:/dev/dri' if dev_dri.stat.exists == True | default(false) else omit }}"
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+      - name: plex
+    state: started

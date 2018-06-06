@@ -1,0 +1,40 @@
+---
+- name: "Setting CloudFlare DNS Record"
+  include_role:
+    name: cloudflare
+  vars:
+    subdomain: tautulli
+
+- name: Create tautulli directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0775
+    owner: MediaServices
+    group: MediaServices
+    recurse: False
+  with_items:
+    - path: '/data/DockerMounts/tautulli/Config'
+
+- name: Create and start container
+  docker_container:
+    name: tautulli
+    image: tautulli/tautulli
+    pull: yes
+    env:
+      PUID: 2000
+      PGID: 2000
+      VIRTUAL_HOST: "tautulli.{{domain}}"
+      VIRTUAL_PORT: 8181
+      LETSENCRYPT_HOST: "tautulli.{{domain}}"
+      LETSENCRYPT_EMAIL: "{{email}}"
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/tautulli/Config:/config'
+      - '/data/DockerMounts/Plex/Config/Library/Application Support/Plex Media Server/Logs:/logs:ro'
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+      - name: plex
+    state: started

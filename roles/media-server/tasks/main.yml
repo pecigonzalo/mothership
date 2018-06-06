@@ -7,8 +7,7 @@
     gid: "{{ item.gid }}"
     state: present
   with_items:
-    - { name: 'MediaServices', gid: 2004 }
-    - { name: 'NGINX', gid: 2005}
+    - { name: 'MediaServices', gid: 2000 }
 
 - name: Add Media Server Users
   tags:
@@ -20,38 +19,11 @@
     group: MediaServices
     state: present
   with_items:
-    - { name: 'Plex', uid: 2000 }
-    - { name: 'Deluge', uid: 2001 }
-    - { name: 'Sonarr', uid: 2002 }
-    - { name: 'Radarr', uid: 2003 }
-    - { name: 'NGINX', uid: 2006 }
+    - { name: 'MediaServices', uid: 2000 }
 
-- name: Configure Plex
-  include: plex.yml
-  tags:
-    - docker-compose
-
-- name: Configure Sonarr
-  include: sonarr.yml
-  tags:
-    - docker-compose
-
-- name: Configure Radarr
-  include: radarr.yml
-  tags:
-    - docker-compose
-
-- name: Configure Ombi
-  include: ombi.yml
-  tags:
-    - docker-compose
-
-- name: Configure Deluge
-  include: deluge.yml
-  tags:
-    - docker-compose
-
-- name: Configure NGINX
-  include: nginx.yml
-  tags:
-    - docker-compose
+- name: Create docker networks
+  docker_network:
+    name: "{{ item.name }}"
+  with_items:
+    - name: proxy
+    - name: plex

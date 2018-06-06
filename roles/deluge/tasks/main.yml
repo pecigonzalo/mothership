@@ -1,0 +1,49 @@
+- name: "Setting CloudFlare DNS Record"
+  include_role:
+    name: cloudflare
+  vars:
+    subdomain: deluge
+
+- name: Create Deluge structure
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0775
+    owner: MediaServices
+    group: MediaServices
+    recurse: False
+  with_items:
+    - path: '/data/DockerMounts/Deluge'
+    - path: '/data/DockerMounts/Deluge/Config'
+
+- name: Create and start container
+  docker_container:
+    name: deluge
+    image: "linuxserver/deluge"
+    pull: yes
+    published_ports:
+      - "58000:58000"
+      - "58000:58000/udp"
+      - "58001:58001"
+      - "58001:58001/udp"
+      - "58002:58002"
+      - "58002:58002/udp"
+    env:
+      PUID: 2000
+      PGID: 2000
+      VIRTUAL_HOST: "deluge.{{domain}}"
+      VIRTUAL_PORT: 8112
+      LETSENCRYPT_HOST: "deluge.{{domain}}"
+      LETSENCRYPT_EMAIL: "{{email}}"
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/Deluge/Config:/config'
+      - '/data/Media/Torrents:/torrents'
+      - '/data/Media/Movies:/movies'
+      - '/data/Media/:/downloads'
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+      - name: plex
+    state: started

@@ -1,0 +1,62 @@
+---
+- name: Create NGINX directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0775
+    owner: NGINX
+    group: NGINX
+    recurse: True
+  with_items:
+    - path: '/data/DockerMounts/NGINX-Proxy/'
+    - path: '/data/DockerMounts/NGINX-Proxy/vhost.d'
+    - path: '/data/DockerMounts/NGINX-Proxy/conf.d'
+    - path: '/data/DockerMounts/NGINX-Proxy/certs'
+    - path: '/data/DockerMounts/NGINX-Proxy/htpasswd'
+
+- name: Import proxy.conf
+  copy: "src=proxy.conf dest=/data/DockerMounts/NGINX-Proxy/proxy.conf force=yes owner=NGINX group=NGINX mode=0775"
+
+- name: Create and start container
+  docker_container:
+    name: nginx-proxy
+    image: "jwilder/nginx-proxy:alpine"
+    pull: yes
+    published_ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "/data/DockerMounts/NGINX-Proxy/vhost.d:/etc/nginx/vhost.d"
+      - "/data/DockerMounts/NGINX-Proxy/conf.d/:/etc/nginx/conf.d"
+      - "/data/DockerMounts/NGINX-Proxy/certs:/etc/nginx/certs:ro"
+      - "/data/DockerMounts/NGINX-Proxy/proxy.conf:/etc/nginx/conf.d/proxy.conf"
+      - "/data/DockerMounts/NGINX-Proxy/htpasswd:/etc/nginx/htpasswd:ro"
+      - "/usr/share/nginx/html"
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+    networks:
+      - name: proxy
+    restart_policy: unless-stopped
+    state: started
+
+- name: Create and start letsencrypt container
+  docker_container:
+    name: letsencrypt
+    image: "jrcs/letsencrypt-nginx-proxy-companion"
+    pull: yes
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - "/data/DockerMounts/NGINX-Proxy/certs:/etc/nginx/certs:rw"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    volumes_from:
+      - "nginx-proxy"
+    env:
+      DEBUG: true
+    networks:
+      - name: proxy
+    restart_policy: unless-stopped
+    state: started

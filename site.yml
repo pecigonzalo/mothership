@@ -1,12 +1,44 @@
 ---
 - name: Mothership
   hosts: mothership
-
+  vars_files:
+    - ['settings.yml', 'settings.yml.default']
   roles:
-    - common
-    - role: angstwad.docker_ubuntu
-      daemon_json:
-        storage-driver: overlay2
-        userland-proxy: false
-    - wordpress
-    - media-server
+    - role: system
+      tags:
+        - base
+    - role: common
+      tags:
+        - base
+    - role: docker
+      tags:
+        - base
+    - role: media-server
+      tags:
+        - base
+    - role: nginx-proxy
+      tags:
+        - update-proxy
+    - role: wordpress
+      tags:
+        - wordpress
+    - role: deluge
+      tags:
+        - update-deluge
+    - role: sonarr
+      tags:
+        - update-sonarr
+    - role: radarr
+      tags:
+        - update-radarr
+    - role: plex
+      tags:
+        - update-plex
+    - role: unifi
+      tags:
+        - update-unifi
+    - role: tautulli
+      tags:
+        - update-tau
+    - role: portainer
+    - role: watchtower

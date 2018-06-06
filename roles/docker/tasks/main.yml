@@ -1,0 +1,47 @@
+---
+- name: Install required packages
+  apt: "name={{item}} state=present"
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg2
+    - software-properties-common
+
+- name: Add official gpg signing key
+  apt_key:
+    id: 0EBFCD88
+    url: https://download.docker.com/linux/debian/gpg
+
+- name: Add official repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+
+- name: Release docker-ce from hold
+  dpkg_selections:
+    name: docker-ce
+    selection: install
+
+- name: Install docker-ce
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: yes
+    force: yes
+
+- name: Check docker daemon.json exists
+  stat:
+    path: /etc/docker/daemon.json
+  register: docker_daemon
+
+- name: Stop docker to enable overlay2
+  systemd: state=stopped name=docker enabled=yes
+  when: docker_daemon.stat.exists == False
+
+- name: Import daemon.json
+  copy: "src=daemon.json dest=/etc/docker/daemon.json force=yes mode=0775"
+  when: docker_daemon.stat.exists == False
+
+- name: Start docker
+  systemd: state=started name=docker enabled=yes
+  when: docker_daemon.stat.exists == False

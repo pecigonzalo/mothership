@@ -1,4 +1,10 @@
 ---
+- name: "Setting CloudFlare DNS Record"
+  include_role:
+    name: cloudflare
+  vars:
+    subdomain: ssh
+
 - name: Install base packages
   apt:
     name: "{{ item }}"
@@ -34,36 +40,22 @@
        - vim
        - tmux
 
-- name: Remove useless packages from the cache
-  apt:
-    autoclean: yes
+- name: Install hostess
+  get_url:
+    url:  https://github.com/cbednarski/hostess/releases/download/v0.3.0/hostess_linux_amd64
+    dest: /usr/local/bin/hostess
+    mode: 0755
+    owner: root
+    group: root
+    force: yes
+    validate_certs: no
+  tags: update-hostess
 
-- name: Remove dependencies that are no longer required
-  apt:
-    autoremove: yes
-
-- name: Mount Data volume
-  mount:
-    path: /data
-    src: UUID="b584c764-ec62-4014-9899-b5ed6d23c60c"
-    fstype: xfs
-    state: present
-
-- iptables:
-    action: insert
-    chain: INPUT
-    in_interface: lo
-    jump: ACCEPT
-
-- iptables:
-    action: insert
-    chain: INPUT
-    ctstate: ESTABLISHED,RELATED
-    jump: ACCEPT
-
-- iptables:
-    action: insert
-    chain: INPUT
-    protocol: tcp
-    destination_port: 22
-    jump: ACCEPT
+- name: Install ngrok
+  unarchive:
+    src: https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+    dest: /usr/local/bin
+    copy: no
+    mode: 0775
+    validate_certs: no
+  tags: update-ngrok

@@ -1,0 +1,41 @@
+---
+- name: "Setting CloudFlare DNS Record"
+  include_role:
+    name: cloudflare
+  vars:
+    subdomain: sonarr
+
+- name: Create Sonarr structure
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0775
+    owner: MediaServices
+    group: MediaServices
+    recurse: False
+  with_items:
+    - path: '/data/DockerMounts/Sonarr'
+    - path: '/data/DockerMounts/Sonarr/Config'
+
+- name: Create and start container
+  docker_container:
+    name: sonarr
+    image: "linuxserver/sonarr"
+    pull: yes
+    env:
+      PUID: 2000
+      PGID: 2000
+      VIRTUAL_HOST: "sonarr.{{domain}}"
+      VIRTUAL_PORT: 8989
+      LETSENCRYPT_HOST: "sonarr.{{domain}}"
+      LETSENCRYPT_EMAIL: "{{email}}"
+    volumes:
+      - '/dev/rtc:/dev/rtc:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/data/DockerMounts/Sonarr/Config:/config'
+      - '/data/Media:/media'
+    networks:
+      - name: proxy
+      - name: plex
+    restart_policy: unless-stopped
+    state: started

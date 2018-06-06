@@ -1,0 +1,11 @@
+---
+- name: Create container
+  docker_container:
+    name: watchtower
+    image: "v2tec/watchtower"
+    pull: yes
+    command: --cleanup --interval 15 sonarr radarr plex
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    state: stopped
