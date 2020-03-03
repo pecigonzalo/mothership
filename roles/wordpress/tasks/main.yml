@@ -18,36 +18,53 @@
     path: "{{ item.path }}"
     state: directory
     mode: 0775
-    owner: 'NGINX'
-    group: 'NGINX'
+    owner: "NGINX"
+    group: "NGINX"
+  with_items:
+    - path: "/data/DockerMounts/wordpress_db"
+    - path: "/data/DockerMounts/wordpress_db/Config"
+    - path: "/data/DockerMounts/wordpress"
+
+- name: Create Wordpress www structure
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0775
+    owner: "www-data"
+    group: "www-data"
     recurse: true
   with_items:
-    - path: '/data/DockerMounts/wordpress_db'
-    - path: '/data/DockerMounts/wordpress_db/Config'
-    - path: '/data/DockerMounts/wordpress'
-    - path: '/data/DockerMounts/wordpress/conf.d'
-    - path: '/data/DockerMounts/wordpress/backups'
+    - path: "/data/DockerMounts/wordpress/www"
+
+- name: Create docker networks
+  docker_network:
+    name: "{{ item.name }}"
+  with_items:
+    - name: wordpress
 
 - name: Create and start DB container
   docker_container:
+    networks_cli_compatible: yes
     name: wordpress-db
     image: linuxserver/mariadb
     pull: yes
     env:
-      PUID: 2001
-      PGID: 2001
+      PUID: "2001"
+      PGID: "2001"
       MYSQL_ROOT_PASSWORD: wordpress
     volumes:
-      - '/dev/rtc:/dev/rtc:ro'
-      - '/etc/localtime:/etc/localtime:ro'
-      - '/data/DockerMounts/wordpress_db/Config:/config'
+      - "/dev/rtc:/dev/rtc:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/DockerMounts/wordpress_db/Config:/config"
     restart_policy: unless-stopped
+    purge_networks: yes
     networks:
       - name: wordpress
     state: started
 
-- name: Create and start Wordpress FPM container
+- name: Create and start JulesInABox FPM container
   docker_container:
+    networks_cli_compatible: yes
     name: wordpress-julesinabox
     image: wordpress
     pull: yes
@@ -57,17 +74,41 @@
       LETSENCRYPT_EMAIL: "{{email}}"
       CERT_NAME: "www.julesinabox.com"
     volumes:
-      - '/dev/rtc:/dev/rtc:ro'
-      - '/etc/localtime:/etc/localtime:ro'
-      - '/data/DockerMounts/wordpress/www/julesinabox:/var/www/html'
+      - "/dev/rtc:/dev/rtc:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/DockerMounts/wordpress/www/julesinabox:/var/www/html"
     restart_policy: unless-stopped
+    purge_networks: yes
     networks:
       - name: proxy
       - name: wordpress
     state: started
 
-- name: Create and start Wordpress FPM container
+- name: Create and start Portfolio FPM container
   docker_container:
+    networks_cli_compatible: yes
+    name: wordpress-portfolio
+    image: wordpress
+    pull: yes
+    env:
+      VIRTUAL_HOST: "portfolio.{{domain}},www.portfolio.{{domain}}"
+      LETSENCRYPT_HOST: "portfolio.{{domain}}"
+      LETSENCRYPT_EMAIL: "{{email}}"
+      CERT_NAME: "portfolio.julesinabox.com"
+    volumes:
+      - "/dev/rtc:/dev/rtc:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/DockerMounts/wordpress/www/portfolio:/var/www/html"
+    restart_policy: unless-stopped
+    purge_networks: yes
+    networks:
+      - name: proxy
+      - name: wordpress
+    state: started
+
+- name: Create and start TKD FPM container
+  docker_container:
+    networks_cli_compatible: yes
     name: wordpress-thekiwidiaries
     image: wordpress
     pull: yes
@@ -77,10 +118,11 @@
       LETSENCRYPT_EMAIL: "{{email}}"
       CERT_NAME: "www.thekiwidiaries.com"
     volumes:
-      - '/dev/rtc:/dev/rtc:ro'
-      - '/etc/localtime:/etc/localtime:ro'
-      - '/data/DockerMounts/wordpress/www/thekiwidiaries:/var/www/html'
+      - "/dev/rtc:/dev/rtc:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/DockerMounts/wordpress/www/thekiwidiaries:/var/www/html"
     restart_policy: unless-stopped
+    purge_networks: yes
     networks:
       - name: proxy
       - name: wordpress

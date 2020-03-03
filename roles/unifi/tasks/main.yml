@@ -13,12 +13,12 @@
     group: root
     recurse: False
   with_items:
-    - path: '/data/DockerMounts/unifi'
+    - path: "/data/DockerMounts/unifi"
 
 - name: Create and start container
   docker_container:
     name: unifi
-    image: "linuxserver/unifi"
+    image: "linuxserver/unifi-controller"
     pull: yes
     published_ports:
       - "8843:8843"
@@ -33,10 +33,11 @@
       LETSENCRYPT_HOST: "control.{{domain}}"
       LETSENCRYPT_EMAIL: "{{email}}"
     volumes:
-      - '/dev/rtc:/dev/rtc:ro'
-      - '/etc/localtime:/etc/localtime:ro'
-      - '/data/DockerMounts/unifi:/config'
+      - "/dev/rtc:/dev/rtc:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/DockerMounts/unifi:/config"
     restart_policy: unless-stopped
+    purge_networks: yes
     networks:
       - name: proxy
     state: started

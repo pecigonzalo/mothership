@@ -2,7 +2,7 @@
 - name: Mothership
   hosts: mothership
   vars_files:
-    - ['settings.yml', 'settings.yml.default']
+    - ["settings.yml", "settings.yml.default"]
   roles:
     - role: system
       tags:
@@ -18,27 +18,41 @@
         - base
     - role: nginx-proxy
       tags:
-        - update-proxy
+        - proxy
     - role: wordpress
       tags:
         - wordpress
     - role: deluge
       tags:
-        - update-deluge
+        - deluge
+        - arr
     - role: sonarr
       tags:
-        - update-sonarr
+        - sonarr
+        - arr
     - role: radarr
       tags:
-        - update-radarr
+        - radarr
+        - arr
+    - role: bazarr
+      tags:
+        - bazarr
+        - arr
     - role: plex
       tags:
-        - update-plex
-    - role: unifi
-      tags:
-        - update-unifi
+        - plex
     - role: tautulli
       tags:
-        - update-tau
+        - plex
+    - role: wallabag
+      tags:
+        - wallabag
+    - role: unifi
+      tags:
+        - unifi
     - role: portainer
+      tags:
+        - docker-tools
     - role: watchtower
+      tags:
+        - docker-tools

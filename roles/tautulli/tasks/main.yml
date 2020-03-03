@@ -14,7 +14,7 @@
     group: MediaServices
     recurse: False
   with_items:
-    - path: '/data/DockerMounts/tautulli/Config'
+    - path: "/data/DockerMounts/tautulli/Config"
 
 - name: Create and start container
   docker_container:
@@ -29,11 +29,12 @@
       LETSENCRYPT_HOST: "tautulli.{{domain}}"
       LETSENCRYPT_EMAIL: "{{email}}"
     volumes:
-      - '/dev/rtc:/dev/rtc:ro'
-      - '/etc/localtime:/etc/localtime:ro'
-      - '/data/DockerMounts/tautulli/Config:/config'
-      - '/data/DockerMounts/Plex/Config/Library/Application Support/Plex Media Server/Logs:/logs:ro'
+      - "/dev/rtc:/dev/rtc:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/DockerMounts/tautulli/Config:/config"
+      - "/data/DockerMounts/Plex/Config/Library/Application Support/Plex Media Server/Logs:/logs:ro"
     restart_policy: unless-stopped
+    purge_networks: yes
     networks:
       - name: proxy
       - name: plex

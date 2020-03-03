@@ -13,8 +13,8 @@
     group: MediaServices
     recurse: False
   with_items:
-    - path: '/data/DockerMounts/Plex'
-    - path: '/data/DockerMounts/Plex/Config'
+    - path: "/data/DockerMounts/Plex"
+    - path: "/data/DockerMounts/Plex/Config"
 
 - name: Check Preferences.xml exists
   stat:
@@ -54,13 +54,14 @@
       LETSENCRYPT_EMAIL: "{{email}}"
       HTTPS_METHOD: noredirect
     volumes:
-      - '/dev/rtc:/dev/rtc:ro'
-      - '/etc/localtime:/etc/localtime:ro'
-      - '/data/DockerMounts/Plex/Config:/config'
-      - '/data/Media:/media'
-      - '/tmp:/tmp'
+      - "/dev/rtc:/dev/rtc:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/DockerMounts/Plex/Config:/config"
+      - "/data/Media:/media"
+      - "/tmp:/tmp"
     devices: "{{ '/dev/dri:/dev/dri' if dev_dri.stat.exists == True | default(false) else omit }}"
     restart_policy: unless-stopped
+    purge_networks: yes
     networks:
       - name: proxy
       - name: plex

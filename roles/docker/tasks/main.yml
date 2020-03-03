@@ -1,33 +1,36 @@
 ---
-- name: Install required packages
-  apt: "name={{item}} state=present"
-  with_items:
-    - apt-transport-https
-    - ca-certificates
-    - curl
-    - gnupg2
-    - software-properties-common
+- name: Install required system packages
+  apt:
+    state: latest
+    update_cache: yes
+    cache_valid_time: 86400
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+      - python-docker
 
-- name: Add official gpg signing key
+- name: Add Docker GPG apt Key
   apt_key:
-    id: 0EBFCD88
-    url: https://download.docker.com/linux/debian/gpg
+    url: https://download.docker.com/linux/raspbian/gpg
+    state: present
 
 - name: Add official repository
   apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
-
-- name: Release docker-ce from hold
-  dpkg_selections:
-    name: docker-ce
-    selection: install
+    repo: "deb https://download.docker.com/linux/raspbian/ {{ ansible_distribution_release }} stable"
+    state: present
 
 - name: Install docker-ce
   apt:
     name: docker-ce
-    state: present
+    state: latest
+    install_recommends: no
     update_cache: yes
-    force: yes
+    cache_valid_time: 86400
 
 - name: Check docker daemon.json exists
   stat:

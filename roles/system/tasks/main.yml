@@ -1,18 +1,9 @@
 ---
-- name: Update packages
+- name: Update and Clean packages
   apt:
+    upgrade: safe
     update_cache: yes
-
-- name: Upgrade packages
-  apt:
-    upgrade: dist
-
-- name: Remove useless packages from the cache
-  apt:
     autoclean: yes
-
-- name: Remove dependencies that are no longer required
-  apt:
     autoremove: yes
 
 - name: Enable sysctl setting
@@ -21,7 +12,7 @@
     name: "{{ item.name }}"
     value: "{{ item.value }}"
     state: present
-  with_items:
+  loop:
     - name: net.ipv4.tcp_window_scaling
       value: 1
     - name: net.core.rmem_max
@@ -117,5 +108,5 @@
     action: insert
     chain: INPUT
     protocol: tcp
-    destination_port: 22
+    destination_port: "22"
     jump: ACCEPT

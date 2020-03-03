@@ -7,42 +7,41 @@
 
 - name: Install base packages
   apt:
-    name: "{{ item }}"
-    state: present
-  with_items:
-       - git
-       - bc
-       - jq
-       - wget
-       - curl
-       - unattended-upgrades
-       - apt-listchanges
-       - apt-transport-https
-       - ca-certificates
-       - gnupg2
-       - software-properties-common
-       - acpid
-       - dkms
-       - python-pip
-       - dnsutils
-       - iotop
-       - htop
-       - glances
-       - iftop
-       - ngrep
-       - iptraf
-       - tree
-       - ncdu
-       - sysstat
-       - mlocate
-       - ntpdate
-       - iptables-persistent
-       - vim
-       - tmux
+    state: latest
+    pkg:
+      - git
+      - bc
+      - jq
+      - wget
+      - curl
+      - unattended-upgrades
+      - apt-listchanges
+      - apt-transport-https
+      - ca-certificates
+      - gnupg2
+      - software-properties-common
+      - acpid
+      - dkms
+      - python-pip
+      - dnsutils
+      - iotop
+      - htop
+      - glances
+      - iftop
+      - ngrep
+      - iptraf
+      - tree
+      - ncdu
+      - sysstat
+      - mlocate
+      - ntpdate
+      - iptables-persistent
+      - vim
+      - tmux
 
 - name: Install hostess
   get_url:
-    url:  https://github.com/cbednarski/hostess/releases/download/v0.3.0/hostess_linux_amd64
+    url: https://github.com/cbednarski/hostess/releases/download/v0.3.0/hostess_linux_amd64
     dest: /usr/local/bin/hostess
     mode: 0755
     owner: root
@@ -59,3 +58,30 @@
     mode: 0775
     validate_certs: no
   tags: update-ngrok
+
+- name: Esnable ssh strict mode
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#?StrictModes"
+    line: "StrictModes yes"
+    state: present
+  notify:
+    - Restart sshd
+
+- name: Disable ssh password login
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - regexp: "^#?PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    - regexp: "^#?ChallengeResponseAuthentication"
+      line: "ChallengeResponseAuthentication no"
+    - regexp: "^#?UsePAM"
+      line: "UsePAM no"
+    - regexp: "^#?PermitEmptyPasswords"
+      line: "PermitEmptyPasswords no"
+  notify:
+    - Restart sshd

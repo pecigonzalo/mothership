@@ -7,7 +7,7 @@
     gid: "{{ item.gid }}"
     state: present
   with_items:
-    - { name: 'MediaServices', gid: 2000 }
+    - { name: "MediaServices", gid: 2000 }
 
 - name: Add Media Server Users
   tags:
@@ -19,7 +19,7 @@
     group: MediaServices
     state: present
   with_items:
-    - { name: 'MediaServices', uid: 2000 }
+    - { name: "MediaServices", uid: 2000 }
 
 - name: Create docker networks
   docker_network:
@@ -27,3 +27,4 @@
   with_items:
     - name: proxy
     - name: plex
+    - name: wallabag

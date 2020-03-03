@@ -14,10 +14,11 @@
     group: MediaServices
     recurse: False
   with_items:
-    - path: '/data/DockerMounts/Portainer'
+    - path: "/data/DockerMounts/Portainer"
 
 - name: Create and start container
   docker_container:
+    networks_cli_compatible: yes
     name: portainer
     image: "portainer/portainer"
     pull: yes
@@ -27,9 +28,10 @@
       - "/data/DockerMounts/Portainer:/data"
     env:
       VIRTUAL_HOST: "portainer.{{domain}}"
-      VIRTUAL_PORT: 9000
+      VIRTUAL_PORT: "9000"
       LETSENCRYPT_HOST: "portainer.{{domain}}"
       LETSENCRYPT_EMAIL: "{{email}}"
+    purge_networks: yes
     networks:
       - name: proxy
     restart_policy: unless-stopped

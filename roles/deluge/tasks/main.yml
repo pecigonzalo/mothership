@@ -13,13 +13,14 @@
     group: MediaServices
     recurse: False
   with_items:
-    - path: '/data/DockerMounts/Deluge'
-    - path: '/data/DockerMounts/Deluge/Config'
+    - path: "/data/DockerMounts/Deluge"
+    - path: "/data/DockerMounts/Deluge/Config"
 
 - name: Create and start container
   docker_container:
+    networks_cli_compatible: yes
     name: deluge
-    image: "linuxserver/deluge"
+    image: "linuxserver/deluge:amd64-5b398f77-ls22"
     pull: yes
     published_ports:
       - "58000:58000"
@@ -29,20 +30,21 @@
       - "58002:58002"
       - "58002:58002/udp"
     env:
-      PUID: 2000
-      PGID: 2000
+      PUID: "2000"
+      PGID: "2000"
       VIRTUAL_HOST: "deluge.{{domain}}"
-      VIRTUAL_PORT: 8112
+      VIRTUAL_PORT: "8112"
       LETSENCRYPT_HOST: "deluge.{{domain}}"
       LETSENCRYPT_EMAIL: "{{email}}"
     volumes:
-      - '/dev/rtc:/dev/rtc:ro'
-      - '/etc/localtime:/etc/localtime:ro'
-      - '/data/DockerMounts/Deluge/Config:/config'
-      - '/data/Media/Torrents:/torrents'
-      - '/data/Media/Movies:/movies'
-      - '/data/Media/:/downloads'
+      - "/dev/rtc:/dev/rtc:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/DockerMounts/Deluge/Config:/config"
+      - "/data/Media/Torrents:/torrents"
+      - "/data/Media/Movies:/movies"
+      - "/data/Media/:/downloads"
     restart_policy: unless-stopped
+    purge_networks: yes
     networks:
       - name: proxy
       - name: plex

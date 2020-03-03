@@ -3,9 +3,9 @@
   include_role:
     name: cloudflare
   vars:
-    subdomain: sonarr
+    subdomain: bazarr
 
-- name: Create Sonarr structure
+- name: Create Bazarr structure
   file:
     path: "{{ item.path }}"
     state: directory
@@ -14,25 +14,26 @@
     group: MediaServices
     recurse: False
   with_items:
-    - path: "/data/DockerMounts/Sonarr"
-    - path: "/data/DockerMounts/Sonarr/Config"
+    - path: "/data/DockerMounts/Bazarr"
+    - path: "/data/DockerMounts/Bazarr/Config"
 
 - name: Create and start container
   docker_container:
-    name: sonarr
-    image: "linuxserver/sonarr"
+    networks_cli_compatible: yes
+    name: bazarr
+    image: "linuxserver/bazarr"
     pull: yes
     env:
-      PUID: 2000
-      PGID: 2000
-      VIRTUAL_HOST: "sonarr.{{domain}}"
-      VIRTUAL_PORT: 8989
-      LETSENCRYPT_HOST: "sonarr.{{domain}}"
+      PUID: "2000"
+      PGID: "2000"
+      VIRTUAL_HOST: "bazarr.{{domain}}"
+      VIRTUAL_PORT: "6767"
+      LETSENCRYPT_HOST: "bazarr.{{domain}}"
       LETSENCRYPT_EMAIL: "{{email}}"
     volumes:
       - "/dev/rtc:/dev/rtc:ro"
       - "/etc/localtime:/etc/localtime:ro"
-      - "/data/DockerMounts/Sonarr/Config:/config"
+      - "/data/DockerMounts/Bazarr/Config:/config"
       - "/data/Media:/media"
     purge_networks: yes
     networks:

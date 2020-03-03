@@ -14,8 +14,8 @@
     group: MediaServices
     recurse: False
   with_items:
-    - path: '/data/DockerMounts/Radarr'
-    - path: '/data/DockerMounts/Radarr/Config'
+    - path: "/data/DockerMounts/Radarr"
+    - path: "/data/DockerMounts/Radarr/Config"
 
 - name: Create and start container
   docker_container:
@@ -30,10 +30,11 @@
       LETSENCRYPT_HOST: "radarr.{{domain}}"
       LETSENCRYPT_EMAIL: "{{email}}"
     volumes:
-      - '/dev/rtc:/dev/rtc:ro'
-      - '/etc/localtime:/etc/localtime:ro'
-      - '/data/DockerMounts/Radarr/Config:/config'
-      - '/data/Media:/media'
+      - "/dev/rtc:/dev/rtc:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/DockerMounts/Radarr/Config:/config"
+      - "/data/Media:/media"
+    purge_networks: yes
     networks:
       - name: proxy
       - name: plex
