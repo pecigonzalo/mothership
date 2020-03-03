@@ -20,7 +20,7 @@
   docker_container:
     networks_cli_compatible: yes
     name: deluge
-    image: "linuxserver/deluge:amd64-5b398f77-ls22"
+    image: "linuxserver/deluge"
     pull: yes
     published_ports:
       - "58000:58000"
