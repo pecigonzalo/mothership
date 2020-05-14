@@ -1,0 +1,48 @@
+---
+- name: Create docker networks
+  docker_network:
+    name: "{{ item.name }}"
+  with_items:
+    - name: minio
+
+- name: Create a volume
+  docker_volume:
+    name: dolar-ar-minio
+
+- name: Create and start minio container
+  docker_container:
+    networks_cli_compatible: yes
+    name: dolar-ar-minio
+    image: minio/minio:latest
+    pull: yes
+    command: server /data
+    env:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: ABC123abc
+    volumes:
+      - "dolar-ar-minio:/data"
+    restart_policy: unless-stopped
+    purge_networks: yes
+    networks:
+      - name: minio
+    state: started
+
+- name: Create and start container
+  docker_container:
+    networks_cli_compatible: yes
+    name: dolar-ar
+    image: pecigonzalo/dolar-ar:latest
+    pull: yes
+    env:
+      NODE_ENV: production
+      SLACK_WEBHOOK: "{{dolar_ar_hook}}"
+      S3_ENDPOINT: http://dolar-ar-minio:9000
+      STORE_BUCKET: dolar-ar
+      STORE_KEY: rate
+      AWS_ACCESS_KEY_ID: minio
+      AWS_SECRET_ACCESS_KEY: ABC123abc
+    restart_policy: unless-stopped
+    purge_networks: yes
+    networks:
+      - name: minio
+    state: started

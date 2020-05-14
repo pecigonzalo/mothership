@@ -56,3 +56,6 @@
     - role: watchtower
       tags:
         - docker-tools
+    - role: dolar-ar
+      tags:
+        - dolar-ar
