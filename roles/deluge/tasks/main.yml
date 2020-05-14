@@ -36,6 +36,7 @@
       VIRTUAL_PORT: "8112"
       LETSENCRYPT_HOST: "deluge.{{domain}}"
       LETSENCRYPT_EMAIL: "{{email}}"
+      DELUGE_LOGLEVEL: "warning"
     volumes:
       - "/dev/rtc:/dev/rtc:ro"
       - "/etc/localtime:/etc/localtime:ro"

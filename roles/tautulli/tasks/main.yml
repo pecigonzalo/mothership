@@ -18,14 +18,15 @@
 
 - name: Create and start container
   docker_container:
+    networks_cli_compatible: yes
     name: tautulli
     image: tautulli/tautulli
     pull: yes
     env:
-      PUID: 2000
-      PGID: 2000
+      PUID: "2000"
+      PGID: "2000"
       VIRTUAL_HOST: "tautulli.{{domain}}"
-      VIRTUAL_PORT: 8181
+      VIRTUAL_PORT: "8181"
       LETSENCRYPT_HOST: "tautulli.{{domain}}"
       LETSENCRYPT_EMAIL: "{{email}}"
     volumes:

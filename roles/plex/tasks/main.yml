@@ -37,19 +37,20 @@
 
 - name: Create and start container
   docker_container:
+    networks_cli_compatible: yes
     name: plex
     image: "plexinc/pms-docker"
     pull: yes
     published_ports:
       - "32400:32400"
     env:
-      PLEX_UID: 2000
-      PLEX_GID: 2000
+      PLEX_UID: "2000"
+      PLEX_GID: "2000"
       PLEX_CLAIM: "{{plex_claim.user_input| default (omit)}}"
-      CHANGE_CONFIG_DIR_OWNERSHIP: false
+      CHANGE_CONFIG_DIR_OWNERSHIP: "false"
       ADVERTISE_IP: "http://plex.{{domain}}:80/,https://plex.{{domain}}:443/"
       VIRTUAL_HOST: "plex.{{domain}}"
-      VIRTUAL_PORT: 32400
+      VIRTUAL_PORT: "32400"
       LETSENCRYPT_HOST: "plex.{{domain}}"
       LETSENCRYPT_EMAIL: "{{email}}"
       HTTPS_METHOD: noredirect
@@ -59,6 +60,8 @@
       - "/data/DockerMounts/Plex/Config:/config"
       - "/data/Media:/media"
       - "/tmp:/tmp"
+      - "/dev/dri:/dev/dri"
+      - "/dev/shm:/dev/transcode"
     devices: "{{ '/dev/dri:/dev/dri' if dev_dri.stat.exists == True | default(false) else omit }}"
     restart_policy: unless-stopped
     purge_networks: yes
