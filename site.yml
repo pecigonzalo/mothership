@@ -3,6 +3,15 @@
   hosts: mothership
   vars_files:
     - ["settings.yml", "settings.yml.default"]
+  module_defaults:
+    community.docker.docker_container:
+      container_default_behavior: no_defaults
+      network_mode: bridge
+      purge_networks: yes
+      pull: yes
+      restart: yes
+      restart_policy: unless-stopped
+      state: started
   roles:
     - role: system
       tags:
@@ -16,9 +25,19 @@
     - role: media-server
       tags:
         - base
-    - role: nginx-proxy
+    - role: netdata
+      tags:
+        - base
+        - netdata
+    # - role: nginx-proxy
+    #   tags:
+    #     - proxy
+    - role: traefik
       tags:
         - proxy
+    - role: authelia
+      tags:
+        - auth
     - role: wordpress
       tags:
         - wordpress

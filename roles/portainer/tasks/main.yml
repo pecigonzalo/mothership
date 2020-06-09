@@ -1,10 +1,4 @@
 ---
-- name: "Setting CloudFlare DNS Record"
-  include_role:
-    name: cloudflare
-  vars:
-    subdomain: portainer
-
 - name: Create Portainer structure
   file:
     path: "{{ item.path }}"
@@ -17,22 +11,16 @@
     - path: "/data/DockerMounts/Portainer"
 
 - name: Create and start container
-  docker_container:
-    networks_cli_compatible: yes
+  community.docker.docker_container:
     name: portainer
     image: "portainer/portainer"
-    pull: yes
     volumes:
-      - "/etc/localtime:/etc/localtime:ro"
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/data/DockerMounts/Portainer:/data"
-    env:
-      VIRTUAL_HOST: "portainer.{{domain}}"
-      VIRTUAL_PORT: "9000"
-      LETSENCRYPT_HOST: "portainer.{{domain}}"
-      LETSENCRYPT_EMAIL: "{{email}}"
-    purge_networks: yes
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.portainer.rule: "Host(`portainer.{{domain}}`)"
+      traefik.http.routers.portainer.tls.certresolver: "letsencrypt"
+      traefik.http.routers.portainer.middlewares: "authelia@docker"
     networks:
       - name: proxy
-    restart_policy: unless-stopped
-    state: started

@@ -1,9 +1,4 @@
-- name: "Setting CloudFlare DNS Record"
-  include_role:
-    name: cloudflare
-  vars:
-    subdomain: plex
-
+---
 - name: Create Plex directories
   file:
     path: "{{ item.path }}"
@@ -36,11 +31,9 @@
   when: plex_prefs.stat.exists == False
 
 - name: Create and start container
-  docker_container:
-    networks_cli_compatible: yes
+  community.docker.docker_container:
     name: plex
     image: "plexinc/pms-docker"
-    pull: yes
     published_ports:
       - "32400:32400"
     env:
@@ -49,23 +42,20 @@
       PLEX_CLAIM: "{{plex_claim.user_input| default (omit)}}"
       CHANGE_CONFIG_DIR_OWNERSHIP: "false"
       ADVERTISE_IP: "http://plex.{{domain}}:80/,https://plex.{{domain}}:443/"
-      VIRTUAL_HOST: "plex.{{domain}}"
-      VIRTUAL_PORT: "32400"
-      LETSENCRYPT_HOST: "plex.{{domain}}"
-      LETSENCRYPT_EMAIL: "{{email}}"
       HTTPS_METHOD: noredirect
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.plex.rule: "Host(`plex.{{domain}}`)"
+      traefik.http.routers.plex.tls.certresolver: "letsencrypt"
+      traefik.http.routers.plex.middlewares: "authelia@docker"
+      traefik.http.services.plex.loadbalancer.server.port: "32400"
     volumes:
-      - "/dev/rtc:/dev/rtc:ro"
-      - "/etc/localtime:/etc/localtime:ro"
       - "/data/DockerMounts/Plex/Config:/config"
       - "/data/Media:/media"
       - "/tmp:/tmp"
       - "/dev/dri:/dev/dri"
       - "/dev/shm:/dev/transcode"
     devices: "{{ '/dev/dri:/dev/dri' if dev_dri.stat.exists == True | default(false) else omit }}"
-    restart_policy: unless-stopped
-    purge_networks: yes
     networks:
       - name: proxy
       - name: plex
-    state: started

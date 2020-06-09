@@ -43,87 +43,56 @@
     - name: wordpress
 
 - name: Create and start DB container
-  docker_container:
-    networks_cli_compatible: yes
+  community.docker.docker_container:
     name: wordpress-db
     image: linuxserver/mariadb
-    pull: yes
     env:
       PUID: "2001"
       PGID: "2001"
       MYSQL_ROOT_PASSWORD: wordpress
     volumes:
-      - "/dev/rtc:/dev/rtc:ro"
-      - "/etc/localtime:/etc/localtime:ro"
       - "/data/DockerMounts/wordpress_db/Config:/config"
-    restart_policy: unless-stopped
-    purge_networks: yes
     networks:
       - name: wordpress
-    state: started
 
 - name: Create and start JulesInABox FPM container
-  docker_container:
-    networks_cli_compatible: yes
+  community.docker.docker_container:
     name: wordpress-julesinabox
     image: wordpress
-    pull: yes
-    env:
-      VIRTUAL_HOST: "www.{{domain}},{{domain}}"
-      LETSENCRYPT_HOST: "www.{{domain}},{{domain}}"
-      LETSENCRYPT_EMAIL: "{{email}}"
-      CERT_NAME: "www.julesinabox.com"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.julesinabox.rule: "Host(`www.{{domain}}`) || Host(`{{domain}}`)"
+      traefik.http.routers.julesinabox.tls.certresolver: "letsencrypt"
     volumes:
-      - "/dev/rtc:/dev/rtc:ro"
-      - "/etc/localtime:/etc/localtime:ro"
       - "/data/DockerMounts/wordpress/www/julesinabox:/var/www/html"
-    restart_policy: unless-stopped
-    purge_networks: yes
     networks:
       - name: proxy
       - name: wordpress
-    state: started
 
 - name: Create and start Portfolio FPM container
-  docker_container:
-    networks_cli_compatible: yes
+  community.docker.docker_container:
     name: wordpress-portfolio
     image: wordpress
-    pull: yes
-    env:
-      VIRTUAL_HOST: "portfolio.{{domain}},www.portfolio.{{domain}}"
-      LETSENCRYPT_HOST: "portfolio.{{domain}}"
-      LETSENCRYPT_EMAIL: "{{email}}"
-      CERT_NAME: "portfolio.julesinabox.com"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.portfolio.rule: "Host(`www.portfolio.{{domain}}`) || Host(`portfolio.{{domain}}`)"
+      traefik.http.routers.portfolio.tls.certresolver: "letsencrypt"
     volumes:
-      - "/dev/rtc:/dev/rtc:ro"
-      - "/etc/localtime:/etc/localtime:ro"
       - "/data/DockerMounts/wordpress/www/portfolio:/var/www/html"
-    restart_policy: unless-stopped
-    purge_networks: yes
     networks:
       - name: proxy
       - name: wordpress
-    state: started
 
 - name: Create and start TKD FPM container
-  docker_container:
-    networks_cli_compatible: yes
+  community.docker.docker_container:
     name: wordpress-thekiwidiaries
     image: wordpress
-    pull: yes
-    env:
-      VIRTUAL_HOST: "www.thekiwidiaries.com,thekiwidiaries.com"
-      LETSENCRYPT_HOST: "www.thekiwidiaries.com,thekiwidiaries.com"
-      LETSENCRYPT_EMAIL: "{{email}}"
-      CERT_NAME: "www.thekiwidiaries.com"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.thekiwidiaries.rule: "Host(`www.thekiwidiaries.com`) || Host(`thekiwidiaries.com`)"
+      traefik.http.routers.thekiwidiaries.tls.certresolver: "letsencrypt"
     volumes:
-      - "/dev/rtc:/dev/rtc:ro"
-      - "/etc/localtime:/etc/localtime:ro"
       - "/data/DockerMounts/wordpress/www/thekiwidiaries:/var/www/html"
-    restart_policy: unless-stopped
-    purge_networks: yes
     networks:
       - name: proxy
       - name: wordpress
-    state: started

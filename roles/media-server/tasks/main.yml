@@ -22,7 +22,7 @@
     - { name: "MediaServices", uid: 2000 }
 
 - name: Create docker networks
-  docker_network:
+  community.docker.docker_network:
     name: "{{ item.name }}"
   with_items:
     - name: proxy

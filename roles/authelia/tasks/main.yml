@@ -1,0 +1,33 @@
+---
+- name: Create tautulli directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0775
+    owner: root
+    group: root
+    recurse: False
+  with_items:
+    - path: "/data/DockerMounts/authelia"
+
+- name: Import users.yml
+  copy: "src=users.yml dest=/data/DockerMounts/authelia/users.yml force=yes"
+
+- name: Import configuration.yml
+  copy: "src=configuration.yml dest=/data/DockerMounts/authelia/configuration.yml force=yes"
+
+- name: Create and start container
+  community.docker.docker_container:
+    name: authelia
+    image: authelia/authelia
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.authelia.rule: "Host(`auth.{{domain}}`)"
+      traefik.http.routers.authelia.tls.certresolver: "letsencrypt"
+      traefik.http.middlewares.authelia.forwardauth.address: "http://authelia:9091/api/verify?rd=https://auth.{{domain}}/"
+      traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
+      traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: "Remote-User, Remote-Groups, Remote-Name, Remote-Email"
+    volumes:
+      - "/data/DockerMounts/authelia/:/config"
+    networks:
+      - name: proxy

@@ -1,9 +1,4 @@
-- name: "Setting CloudFlare DNS Record"
-  include_role:
-    name: cloudflare
-  vars:
-    subdomain: deluge
-
+---
 - name: Create Deluge structure
   file:
     path: "{{ item.path }}"
@@ -17,11 +12,9 @@
     - path: "/data/DockerMounts/Deluge/Config"
 
 - name: Create and start container
-  docker_container:
-    networks_cli_compatible: yes
+  community.docker.docker_container:
     name: deluge
     image: "linuxserver/deluge"
-    pull: yes
     published_ports:
       - "58000:58000"
       - "58000:58000/udp"
@@ -29,24 +22,22 @@
       - "58001:58001/udp"
       - "58002:58002"
       - "58002:58002/udp"
+      - "127.0.0.1:8112:8112"
     env:
       PUID: "2000"
       PGID: "2000"
-      VIRTUAL_HOST: "deluge.{{domain}}"
-      VIRTUAL_PORT: "8112"
-      LETSENCRYPT_HOST: "deluge.{{domain}}"
-      LETSENCRYPT_EMAIL: "{{email}}"
       DELUGE_LOGLEVEL: "warning"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.deluge.rule: "Host(`deluge.{{domain}}`)"
+      traefik.http.routers.deluge.tls.certresolver: "letsencrypt"
+      traefik.http.routers.deluge.middlewares: "authelia@docker"
+      traefik.http.services.deluge.loadbalancer.server.port: "8112"
     volumes:
-      - "/dev/rtc:/dev/rtc:ro"
-      - "/etc/localtime:/etc/localtime:ro"
       - "/data/DockerMounts/Deluge/Config:/config"
       - "/data/Media/Torrents:/torrents"
       - "/data/Media/Movies:/movies"
       - "/data/Media/:/downloads"
-    restart_policy: unless-stopped
-    purge_networks: yes
     networks:
       - name: proxy
       - name: plex
-    state: started

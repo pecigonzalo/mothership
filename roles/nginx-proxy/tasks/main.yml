@@ -14,50 +14,65 @@
     - path: "/data/DockerMounts/NGINX-Proxy/certs"
     - path: "/data/DockerMounts/NGINX-Proxy/htpasswd"
 
-- name: Import proxy.conf
-  copy: "src=proxy.conf dest=/data/DockerMounts/NGINX-Proxy/proxy.conf force=yes owner=NGINX group=NGINX mode=0775"
+- name: Import NGINX Conf
+  copy:
+    src: "{{ item.src }}"
+    dest: /data/DockerMounts/NGINX-Proxy/{{ item.dst }}
+    force: yes
+    owner: NGINX
+    group: NGINX
+    mode: 0775
+  with_items:
+    - src: conf.d/proxy.conf
+      dst: conf.d/proxy.conf
+    - src: conf.d/cache.conf
+      dst: conf.d/cache.conf
+    - src: conf.d/authelia.conf
+      dst: conf.d/authelia.conf
+    - src: vhost.d/auth.conf
+      dst: vhost.d/auth.conf
+    - src: vhost.d/auth-target.julesinabox.com.conf
+      dst: vhost.d/radarr.julesinabox.com
+    - src: vhost.d/auth-target.julesinabox.com.conf
+      dst: vhost.d/sonarr.julesinabox.com
+    - src: vhost.d/auth-target.julesinabox.com.conf
+      dst: vhost.d/deluge.julesinabox.com
+    - src: vhost.d/auth-target.julesinabox.com.conf
+      dst: vhost.d/portainer.julesinabox.com
+    - src: vhost.d/auth-target.julesinabox.com.conf
+      dst: vhost.d/bazarr.julesinabox.com
+    - src: vhost.d/auth-target.julesinabox.com.conf
+      dst: vhost.d/netdata.julesinabox.com
 
 - name: Create and start container
-  docker_container:
+  community.docker.docker_container:
     name: nginx-proxy
     image: "jwilder/nginx-proxy:alpine"
-    pull: yes
     published_ports:
       - "80:80"
       - "443:443"
     volumes:
-      - "/dev/rtc:/dev/rtc:ro"
-      - "/etc/localtime:/etc/localtime:ro"
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
       - "/data/DockerMounts/NGINX-Proxy/vhost.d:/etc/nginx/vhost.d"
       - "/data/DockerMounts/NGINX-Proxy/conf.d/:/etc/nginx/conf.d"
       - "/data/DockerMounts/NGINX-Proxy/certs:/etc/nginx/certs"
-      - "/data/DockerMounts/NGINX-Proxy/proxy.conf:/etc/nginx/conf.d/proxy.conf"
       - "/data/DockerMounts/NGINX-Proxy/htpasswd:/etc/nginx/htpasswd:ro"
       - "/usr/share/nginx/html"
     labels:
       com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
-    purge_networks: yes
     networks:
       - name: proxy
-    restart_policy: unless-stopped
-    state: started
 
 - name: Create and start letsencrypt container
-  docker_container:
+  community.docker.docker_container:
     name: letsencrypt
     image: "jrcs/letsencrypt-nginx-proxy-companion"
-    pull: yes
     volumes:
-      - "/dev/rtc:/dev/rtc:ro"
-      - "/etc/localtime:/etc/localtime:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     volumes_from:
       - "nginx-proxy"
     env:
-      DEBUG: true
-    purge_networks: yes
+      DEFAULT_EMAIL: "{{email}}"
+      DEBUG: "false"
     networks:
       - name: proxy
-    restart_policy: unless-stopped
-    state: started

@@ -1,10 +1,4 @@
 ---
-- name: "Setting CloudFlare DNS Record"
-  include_role:
-    name: cloudflare
-  vars:
-    subdomain: radarr
-
 - name: Create Radarr structure
   file:
     path: "{{ item.path }}"
@@ -18,25 +12,21 @@
     - path: "/data/DockerMounts/Radarr/Config"
 
 - name: Create and start container
-  docker_container:
+  community.docker.docker_container:
     name: radarr
     image: linuxserver/radarr
-    pull: yes
     env:
-      PUID: 2000
-      PGID: 2000
-      VIRTUAL_HOST: "radarr.{{domain}}"
-      VIRTUAL_PORT: 7878
-      LETSENCRYPT_HOST: "radarr.{{domain}}"
-      LETSENCRYPT_EMAIL: "{{email}}"
+      PUID: "2000"
+      PGID: "2000"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.radarr.rule: "Host(`radarr.{{domain}}`)"
+      traefik.http.routers.radarr.tls.certresolver: "letsencrypt"
+      traefik.http.routers.radarr.middlewares: "authelia@docker"
+      traefik.http.services.radarr.loadbalancer.server.port: "7878"
     volumes:
-      - "/dev/rtc:/dev/rtc:ro"
-      - "/etc/localtime:/etc/localtime:ro"
       - "/data/DockerMounts/Radarr/Config:/config"
       - "/data/Media:/media"
-    purge_networks: yes
     networks:
       - name: proxy
       - name: plex
-    restart_policy: unless-stopped
-    state: started

@@ -1,11 +1,8 @@
 ---
 - name: Create and start Watchtower container
-  docker_container:
+  community.docker.docker_container:
     name: watchtower
     image: containrrr/watchtower
-    pull: yes
     command: --cleanup --interval 15
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-    restart_policy: unless-stopped
-    state: started

@@ -10,29 +10,22 @@
     name: dolar-ar-minio
 
 - name: Create and start minio container
-  docker_container:
-    networks_cli_compatible: yes
+  community.docker.docker_container:
     name: dolar-ar-minio
     image: minio/minio:latest
-    pull: yes
     command: server /data
     env:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: ABC123abc
     volumes:
       - "dolar-ar-minio:/data"
-    restart_policy: unless-stopped
-    purge_networks: yes
     networks:
       - name: minio
-    state: started
 
 - name: Create and start container
-  docker_container:
-    networks_cli_compatible: yes
+  community.docker.docker_container:
     name: dolar-ar
     image: pecigonzalo/dolar-ar:latest
-    pull: yes
     env:
       INTERVAL: "300000"
       NODE_ENV: production
@@ -42,8 +35,5 @@
       STORE_KEY: rate
       AWS_ACCESS_KEY_ID: minio
       AWS_SECRET_ACCESS_KEY: ABC123abc
-    restart_policy: unless-stopped
-    purge_networks: yes
     networks:
       - name: minio
-    state: started

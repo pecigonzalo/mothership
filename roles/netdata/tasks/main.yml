@@ -1,0 +1,38 @@
+---
+- name: Create netdatalib
+  docker_volume:
+    name: netdatalib
+
+- name: Create netdatacache
+  docker_volume:
+    name: netdatacache
+
+- name: Create and start container
+  community.docker.docker_container:
+    name: netdata
+    image: netdata/netdata
+    published_ports:
+      - "19999:19999"
+    capabilities:
+      - sys_ptrace
+    security_opts:
+      - apparmor:unconfined
+    env:
+      DOCKER_USR: "root"
+      PGID: "999"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.netdata.rule: "Host(`netdata.{{domain}}`)"
+      traefik.http.routers.netdata.tls.certresolver: "letsencrypt"
+      traefik.http.routers.netdata.middlewares: "authelia@docker"
+    volumes:
+      - "netdatalib:/var/lib/netdata"
+      - "netdatacache:/var/cache/netdata"
+      - "/etc/passwd:/host/etc/passwd:ro"
+      - "/etc/group:/host/etc/group:ro"
+      - "/proc:/host/proc:ro"
+      - "/sys:/host/sys:ro"
+      - "/etc/os-release:/host/etc/os-release:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - name: proxy

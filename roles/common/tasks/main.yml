@@ -1,10 +1,4 @@
 ---
-- name: "Setting CloudFlare DNS Record"
-  include_role:
-    name: cloudflare
-  vars:
-    subdomain: ssh
-
 - name: Install base packages
   apt:
     state: latest

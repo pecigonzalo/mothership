@@ -1,10 +1,4 @@
 ---
-- name: "Setting CloudFlare DNS Record"
-  include_role:
-    name: cloudflare
-  vars:
-    subdomain: bazarr
-
 - name: Create Bazarr structure
   file:
     path: "{{ item.path }}"
@@ -18,26 +12,20 @@
     - path: "/data/DockerMounts/Bazarr/Config"
 
 - name: Create and start container
-  docker_container:
-    networks_cli_compatible: yes
+  community.docker.docker_container:
     name: bazarr
-    image: "linuxserver/bazarr"
-    pull: yes
+    image: "linuxserver/bazarr:development"
     env:
       PUID: "2000"
       PGID: "2000"
-      VIRTUAL_HOST: "bazarr.{{domain}}"
-      VIRTUAL_PORT: "6767"
-      LETSENCRYPT_HOST: "bazarr.{{domain}}"
-      LETSENCRYPT_EMAIL: "{{email}}"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.bazarr.rule: "Host(`bazarr.{{domain}}`)"
+      traefik.http.routers.bazarr.tls.certresolver: "letsencrypt"
+      traefik.http.routers.bazarr.middlewares: "authelia@docker"
     volumes:
-      - "/dev/rtc:/dev/rtc:ro"
-      - "/etc/localtime:/etc/localtime:ro"
       - "/data/DockerMounts/Bazarr/Config:/config"
       - "/data/Media:/media"
-    purge_networks: yes
     networks:
       - name: proxy
       - name: plex
-    restart_policy: unless-stopped
-    state: started

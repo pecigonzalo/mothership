@@ -1,10 +1,4 @@
 ---
-- name: "Setting CloudFlare DNS Record"
-  include_role:
-    name: cloudflare
-  vars:
-    subdomain: sonarr
-
 - name: Create Sonarr structure
   file:
     path: "{{ item.path }}"
@@ -18,25 +12,21 @@
     - path: "/data/DockerMounts/Sonarr/Config"
 
 - name: Create and start container
-  docker_container:
+  community.docker.docker_container:
     name: sonarr
     image: "linuxserver/sonarr"
-    pull: yes
     env:
-      PUID: 2000
-      PGID: 2000
-      VIRTUAL_HOST: "sonarr.{{domain}}"
-      VIRTUAL_PORT: 8989
-      LETSENCRYPT_HOST: "sonarr.{{domain}}"
-      LETSENCRYPT_EMAIL: "{{email}}"
+      PUID: "2000"
+      PGID: "2000"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.sonarr.rule: "Host(`sonarr.{{domain}}`)"
+      traefik.http.routers.sonarr.tls.certresolver: "letsencrypt"
+      traefik.http.routers.sonarr.middlewares: "authelia@docker"
+      traefik.http.services.sonarr.loadbalancer.server.port: "8989"
     volumes:
-      - "/dev/rtc:/dev/rtc:ro"
-      - "/etc/localtime:/etc/localtime:ro"
       - "/data/DockerMounts/Sonarr/Config:/config"
       - "/data/Media:/media"
-    purge_networks: yes
     networks:
       - name: proxy
       - name: plex
-    restart_policy: unless-stopped
-    state: started
