@@ -34,6 +34,7 @@
     image: pecigonzalo/dolar-ar:latest
     pull: yes
     env:
+      INTERVAL: "300000"
       NODE_ENV: production
       SLACK_WEBHOOK: "{{dolar_ar_hook}}"
       S3_ENDPOINT: http://dolar-ar-minio:9000
